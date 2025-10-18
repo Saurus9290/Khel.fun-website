@@ -4,9 +4,16 @@ import { TiLocationArrow } from "react-icons/ti";
 const BentoTilt = ({ children, className = "" }) => {
   const [transformStyle, setTransformStyle] = useState("");
   const itemRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile on mount
+  useState(() => {
+    setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+  }, []);
 
   const handleMouseMove = (e) => {
-    if (!itemRef.current) return;
+    // Disable tilt on mobile/touch devices
+    if (isMobile || !itemRef.current) return;
 
     const { left, top, width, height } =
       itemRef.current.getBoundingClientRect();
@@ -22,7 +29,9 @@ const BentoTilt = ({ children, className = "" }) => {
   };
 
   const handleMouseLeave = () => {
-    setTransformStyle("");
+    if (!isMobile) {
+      setTransformStyle("");
+    }
   };
 
   return (
@@ -31,7 +40,7 @@ const BentoTilt = ({ children, className = "" }) => {
       className={className}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ transform: transformStyle }}
+      style={{ transform: isMobile ? 'none' : transformStyle }}
     >
       {children}
     </div>
@@ -42,20 +51,34 @@ const BentoCard = ({ src, title, description, players = "1-4", status = "LIVE", 
   const isLive = status === "LIVE";
   const statusColor = isLive ? "border-green-400/50" : "border-yellow-400/50";
   const dotColor = isLive ? "bg-green-400" : "bg-yellow-400";
+  const videoRef = useRef(null);
   
   const handleClick = () => {
     if (isLive && link) {
       window.open(link, '_blank', 'noopener,noreferrer');
     }
   };
+
+  // Prevent video autoplay issues on mobile
+  const handleVideoLoad = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Autoplay prevented - this is fine for mobile
+      });
+    }
+  };
   
   return (
     <div className="group relative size-full">
       <video
+        ref={videoRef}
         src={src}
         loop
         muted
+        playsInline
         autoPlay
+        preload="metadata"
+        onLoadedData={handleVideoLoad}
         className="absolute left-0 top-0 size-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
       />
       
@@ -104,7 +127,7 @@ const Features = () => {
   return (
     <section className="bg-black pb-52">
       <div className="container mx-auto px-3 md:px-10">
-        <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]">
+        <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh] zunno-glow-card">
           <BentoCard
             src="videos/feature-1.mp4"
             title="Zunno"

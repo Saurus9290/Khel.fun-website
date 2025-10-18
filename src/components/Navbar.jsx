@@ -44,6 +44,11 @@ const Navbar = () => {
   }, [isAudioPlaying]);
 
   useEffect(() => {
+    // Close mobile menu on scroll
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+
     if (currentScrollY === 0) {
       //Topmost position: show navbar without floating-nav
       setIsNavVisible(true);
@@ -58,7 +63,7 @@ const Navbar = () => {
       navContainerRef.current.classList.add("floating-nav");
     }
     setLastScrollY(currentScrollY);
-  }, [currentScrollY, lastScrollY]);
+  }, [currentScrollY, lastScrollY, isMobileMenuOpen]);
 
   useEffect(() => {
     gsap.to(navContainerRef.current, {

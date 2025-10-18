@@ -35,12 +35,15 @@ const About = () => {
       }
     }
 
+    // Check if mobile
+    const isMobile = window.innerWidth < 768;
+    
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#clip",
-        start: "center center",
-        end: "+=1200 center",
-        scrub: 1,
+        start: isMobile ? "top center" : "center center",
+        end: isMobile ? "+=800 center" : "+=1200 center",
+        scrub: isMobile ? 0.5 : 1,
         pin: true,
         pinSpacing: true,
       },
