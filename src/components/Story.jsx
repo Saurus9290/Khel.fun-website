@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import AnimatedTitle from "./AnimatedTitle";
 import gsap from "gsap";
 import RoundedCorners from "./RoundedCorners";
 import Button from "./Button"
 const Story = () => {
-  const frameRef = useRef("");
+  const frameRef = useRef(null);
 
   const handleMouseLeave = () => {
     const element = frameRef.current;

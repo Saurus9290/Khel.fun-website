@@ -1,11 +1,10 @@
-import React from "react";
 import AnimatedTitle from "./AnimatedTitle";
 import Button from "./Button";
 
 const ImageClipBox = ({ src, clipClass }) => {
   return (
     <div className={clipClass}>
-      <img src={src} />
+      <img src={src} alt="Contact decoration" />
     </div>
   );
 };
@@ -41,7 +40,7 @@ const Contact = () => {
             className="special-font !md:text-[6.2rem] w-full font-zentry !text-5xl !font-black !leading-[.9]"
           />
 
-          <Button title="GG IRL" containerClass="mt-10 cursor-pointer" />
+          <Button title="GG IRL" containerClass="mt-10 cursor-pointer" variant="neon" />
         </div>
       </div>
     </div>

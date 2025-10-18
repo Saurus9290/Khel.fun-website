@@ -38,22 +38,62 @@ const BentoTilt = ({ children, className = "" }) => {
   );
 };
 
-const BentoCard = ({ src, title, description }) => {
+const BentoCard = ({ src, title, description, players = "1-4", status = "LIVE", link }) => {
+  const isLive = status === "LIVE";
+  const statusColor = isLive ? "border-green-400/50" : "border-yellow-400/50";
+  const dotColor = isLive ? "bg-green-400" : "bg-yellow-400";
+  
+  const handleClick = () => {
+    if (isLive && link) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    }
+  };
+  
   return (
-    <div className="relative size-full">
+    <div className="group relative size-full">
       <video
         src={src}
         loop
         muted
         autoPlay
-        className="absolute left-0 top-0 size-full object-cover object-center"
+        className="absolute left-0 top-0 size-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
       />
+      
+      {/* Dark overlay on hover */}
+      <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      
       <div className="relative z-10 flex size-full flex-col justify-between p-5 text-blue-50">
+        {/* Top Status Badges */}
+        <div className="flex items-start justify-between">
+          <div className={`flex items-center gap-2 rounded-full border ${statusColor} bg-black/50 px-3 py-1 backdrop-blur-sm`}>
+            <div className={`h-2 w-2 ${isLive ? 'animate-pulse' : ''} rounded-full ${dotColor}`} />
+            <span className="font-mono text-xs">{status}</span>
+          </div>
+          
+          <div className="rounded-full border border-violet-300/50 bg-black/50 px-3 py-1 backdrop-blur-sm">
+            <span className="font-mono text-xs">{players} Players</span>
+          </div>
+        </div>
+        
+        {/* Bottom Title and Description */}
         <div>
-          <h1 className="bento-title special-font">{title}</h1>
+          <h1 className="bento-title special-font drop-shadow-lg">{title}</h1>
           {description && (
-            <p className="mt-3 max-w-64 text-xs md:text-base ">{description}</p>
+            <p className="mt-3 max-w-64 text-xs opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:text-base">
+              {description}
+            </p>
           )}
+          
+          {/* Play Button appears on hover - different text for WIP */}
+          <button 
+            onClick={handleClick}
+            disabled={!isLive}
+            className={`mt-4 rounded-full border-2 border-white bg-violet-300 px-6 py-2 font-bold uppercase opacity-0 transition-all duration-300 group-hover:opacity-100 ${
+              isLive ? 'hover:bg-white hover:text-violet-300 cursor-pointer' : 'cursor-not-allowed opacity-70'
+            }`}
+          >
+            {isLive ? 'Play Now →' : 'Coming Soon'}
+          </button>
         </div>
       </div>
     </div>
@@ -68,6 +108,10 @@ const Features = () => {
           <BentoCard
             src="videos/feature-1.mp4"
             title="Zunno"
+            description="Experience the thrill of traditional Zunno game on blockchain"
+            players="2-4"
+            status="LIVE"
+            link="https://zunno.xyz"
           />
         </BentoTilt>
 
@@ -76,6 +120,9 @@ const Features = () => {
                 <BentoCard 
                   src="videos/feature-2.mp4"
                   title="POKER"
+                  description="Classic Texas Hold'em with crypto stakes - Coming Soon"
+                  players="2-8"
+                  status="WIP"
                 />
             </BentoTilt>
 
@@ -83,6 +130,9 @@ const Features = () => {
                 <BentoCard 
                   src="videos/feature-3.mp4"
                   title="3-PATTI"
+                  description="Indian card game favorite with blockchain rewards - Coming Soon"
+                  players="2-6"
+                  status="WIP"
                 />
             </BentoTilt>
 
@@ -90,6 +140,9 @@ const Features = () => {
                 <BentoCard 
                   src="videos/feature-4.mp4"
                   title="TIC TAC TOE"
+                  description="Quick matches, instant payouts - Coming Soon"
+                  players="2"
+                  status="WIP"
                 />
             </BentoTilt>
         

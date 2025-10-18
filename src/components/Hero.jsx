@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Button from "./Button";
 import { TiLocationArrow } from "react-icons/ti";
 import { useGSAP } from "@gsap/react";
@@ -9,57 +9,11 @@ import { ScrollTrigger } from "gsap/all";
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
-  const [currentIndex, setCureentIndex] = useState(1);
-  const [hasClicked, setHasClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadedVideos, setLoadedVideos] = useState(0);
-
-  const totalVideos = 4;
-  const nextVideoRef = useRef(null);
 
   const handleVideoLoad = () => {
-    setLoadedVideos((prev) => prev + 1);
+    setIsLoading(false);
   };
-
-  const upcomingVideoIndex = (currentIndex % totalVideos) + 1;
-
-  const handleMiniVdClick = () => {
-    setHasClicked(true);
-
-    setCureentIndex(upcomingVideoIndex);
-  };
-
-  useEffect(() => {
-    if (loadedVideos === totalVideos - 1) {
-      setIsLoading(false);
-    }
-  }, [loadedVideos]);
-
-  useGSAP(
-    () => {
-      if (hasClicked) {
-        gsap.set("#next-video", { visibility: "visible" });
-
-        gsap.to("#next-video", {
-          transformOrigin: "center center",
-          scale: 1,
-          width: "100%",
-          height: "100%",
-          duration: 1,
-          ease: "power1.inOut",
-          onStart: () => nextVideoRef.current.play(),
-        });
-
-        gsap.from("#current-video", {
-          transformOrigin: "center center",
-          scale: 0,
-          duration: 1.5,
-          ease: "power1.inOut",
-        });
-      }
-    },
-    { dependencies: [currentIndex], revertOnUpdate: true }
-  );
 
   useGSAP(() => {
     gsap.set("#video-frame", {
@@ -80,16 +34,29 @@ const Hero = () => {
     });
   });
 
-  const getVideoSrc = (index) => `videos/hero-${index}.mp4`;
-
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden">
       {isLoading && (
-        <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50">
-          <div className="three-body">
-            <div className="three-body__dot" />
-            <div className="three-body__dot" />
-            <div className="three-body__dot" />
+        <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-gradient-to-b from-black via-violet-900 to-black">
+          {/* Animated Background Grid */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="h-full w-full animate-grid-move bg-[linear-gradient(to_right,#5724FF_1px,transparent_1px),linear-gradient(to_bottom,#5724FF_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+          </div>
+          
+          <div className="flex flex-col items-center gap-8">
+            {/* Spinner */}
+            <div className="three-body">
+              <div className="three-body__dot" />
+              <div className="three-body__dot" />
+              <div className="three-body__dot" />
+            </div>
+            
+            {/* Loading Text */}
+            <div className="flex flex-col items-center gap-2">
+              <p className="animate-pulse font-zentry text-2xl font-bold text-violet-300">
+                LOADING GAME
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -97,55 +64,42 @@ const Hero = () => {
         id="video-frame"
         className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-blue-75"
       >
-        <div className="mask-clip-path absolute-center absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg">
-          <div
-            onClick={handleMiniVdClick}
-            className="origin-center scale-50 opacity-0 transition-all duration-500 ease-in hover:scale-100 hover:opacity-100"
-          >
-            <video
-              ref={nextVideoRef}
-              src={getVideoSrc(upcomingVideoIndex)}
-              loop
-              muted
-              id="current-video"
-              className="size-64 origin-center scale-150 object-cover object-center"
-              onLoadedData={handleVideoLoad}
-            />
-          </div>
-        </div>
-
+        {/* Single video - with styled frame and zoom to fill */}
         <video
-          ref={nextVideoRef}
-          src={getVideoSrc(currentIndex)}
-          loop
-          muted
-          id="next-video"
-          className="absolute-center invisible absolute z-20 size-64 object-cover object-center"
-          onLoadedData={handleVideoLoad}
-        />
-
-        <video
-          src={getVideoSrc(currentIndex === totalVideos - 1 ? 1 : currentIndex)}
+          src="/videos/hero-1.mp4"
           autoPlay
           loop
           muted
-          className="absolute left-0 top-0 size-full object-cover object-center "
+          playsInline
+          className="absolute left-0 top-0 size-full object-cover object-center"
           onLoadedData={handleVideoLoad}
+          style={{ 
+            transform: 'scale(1.3)',
+            transformOrigin: 'center center'
+          }}
         />
-
-        <h1 className="special-font hero-heading absolute bottom-5 right-5 z-40 text-blue-75">
-          .FUN
-        </h1>
-
-        <div className="absolute left-0 top-0 z-40 size-full">
-          <div className="mt-24 px-5 sm:px-10">
-            <h1 className="special-font hero-heading text-blue-100">KHEL</h1>
+        
+        {/* Gaming Corner Accents */}
+        <div className="hero-corner-accents pointer-events-none">
+          {/* Top Left Corner */}
+          <div className="absolute left-5 top-5 z-50 flex items-center gap-3">
+            <div className="h-[2px] w-12 animate-pulse-slow bg-violet-300" />
+            <div className="h-2 w-2 rotate-45 border-2 border-violet-300" />
+          </div>
+          
+          {/* Top Right Corner */}
+          <div className="absolute right-5 top-5 z-50 flex items-center gap-3">
+            <div className="h-2 w-2 rotate-45 border-2 border-violet-300" />
+            <div className="h-[2px] w-12 animate-pulse-slow bg-violet-300" />
+          </div>
+          
+          {/* Bottom Left Corner */}
+          <div className="absolute bottom-20 left-5 z-50 flex flex-col gap-3">
+            <div className="h-12 w-[2px] animate-pulse-slow bg-violet-300" />
+            <div className="h-2 w-2 rotate-45 border-2 border-violet-300" />
           </div>
         </div>
       </div>
-      <h1 className="special-font hero-heading absolute bottom-5 right-5 text-black">
-        .FUN
-      </h1>
     </div>
   );
 };

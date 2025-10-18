@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const AnimatedTitle = ({title, containerClass}) => {
     const containerRef = useRef(null);

@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useWindowScroll } from "react-use";
 import { TiLocationArrow } from "react-icons/ti";
+import { FaGamepad } from "react-icons/fa";
+import { HiMenuAlt3, HiX } from "react-icons/hi";
 
 import Button from "./Button";
 
@@ -11,6 +13,7 @@ const Navbar = () => {
   //State for toggling audio and visual indicator
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isIndicatorActive, setIsIndicatorActive] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   //refs for audio and navigation center
   const audioElementRef = useRef(null);
@@ -24,6 +27,11 @@ const Navbar = () => {
   const toggleAudioIndicator = () => {
     setIsAudioPlaying((prev) => !prev);
     setIsIndicatorActive((prev) => !prev);
+  };
+
+  //Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen((prev) => !prev);
   };
 
   //manage audio playback
@@ -63,40 +71,83 @@ const Navbar = () => {
   return (
     <div
       ref={navContainerRef}
-      className="fixed inset-x-0 top-4 z-50 h-16 border-none transition-all duration-700 sm:inset-x-6 "
+      className="fixed inset-x-0 top-4 z-50 h-16 border-none transition-all duration-700 sm:inset-x-6"
     >
       <header className="absolute top-1/2 w-full -translate-y-1/2">
         <nav className="flex size-full items-center justify-between p-4">
           {/*Logo and product button */}
           <div className="flex items-center gap-7">
-            <img src="/img/logo.png" alt="logo" className="w-10" />
+            <div className="group relative flex items-center gap-3">
+              <div className="relative">
+                <img 
+                  src="/img/logo.png" 
+                  alt="logo" 
+                  className="w-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" 
+                />
+                {/* Glow effect on logo */}
+                <div className="absolute inset-0 -z-10 blur-xl bg-violet-300/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </div>
+              
+              {/* Brand name - hidden on mobile */}
+              <span className="hidden lg:block font-zentry text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-blue-300 to-violet-300 animate-pulse-slow">
+                KHEL.FUN
+              </span>
+            </div>
 
             <Button
               id="product-button"
-              title="KHILADI"
-              rightIcon={<TiLocationArrow />}
-              containerClass="bg-blue-50 md:flex hidden items-center justify-center gap-1"
+              title="PLAY NOW"
+              rightIcon={<FaGamepad className="animate-pulse" />}
+              containerClass="md:flex hidden items-center justify-center gap-1"
+              variant="gaming"
             />
           </div>
 
           {/*Navigation links and audio button */}
           <div className="flex h-full items-center">
-            <div className="hidden md:block">
-              {navItems.map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="nav-hover-btn"
-                >
-                  {item}
-                </a>
-              ))}
+            <div className="hidden md:flex items-center gap-2">
+              {navItems.map((item, index) => {
+                const isZunno = item === "ZUNNO";
+                const href = isZunno ? "https://zunno.xyz" : `#${item.toLowerCase()}`;
+                const target = isZunno ? "_blank" : "_self";
+                const rel = isZunno ? "noopener noreferrer" : undefined;
+                
+                return (
+                  <a
+                    key={item}
+                    href={href}
+                    target={target}
+                    rel={rel}
+                    className="nav-hover-btn-enhanced"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <span className="nav-link-text">{item}</span>
+                    <span className="nav-link-glow" />
+                  </a>
+                );
+              })}
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden ml-4 text-blue-50 hover:text-violet-300 transition-colors duration-300"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? (
+                <HiX className="w-6 h-6" />
+              ) : (
+                <HiMenuAlt3 className="w-6 h-6" />
+              )}
+            </button>
 
             <button
               onClick={toggleAudioIndicator}
-              className="ml-10 flex items-center space-x-0.5"
+              className="ml-6 md:ml-10 flex items-center space-x-0.5 group relative"
+              aria-label="Toggle audio"
             >
+              {/* Audio button background glow */}
+              <div className="absolute inset-0 -z-10 rounded-lg bg-violet-300/20 blur-md opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <audio
                 ref={audioElementRef}
                 className="hidden"
@@ -115,6 +166,47 @@ const Navbar = () => {
             </button>
           </div>
         </nav>
+
+        {/* Mobile Menu */}
+        <div
+          className={`md:hidden absolute top-full left-0 right-0 mt-4 mx-4 rounded-lg bg-black/95 backdrop-blur-xl border border-violet-300/30 overflow-hidden transition-all duration-300 ${
+            isMobileMenuOpen
+              ? "max-h-96 opacity-100 translate-y-0"
+              : "max-h-0 opacity-0 -translate-y-4"
+          }`}
+        >
+          <div className="flex flex-col p-4 space-y-2">
+            {navItems.map((item, index) => {
+              const isZunno = item === "ZUNNO";
+              const href = isZunno ? "https://zunno.xyz" : `#${item.toLowerCase()}`;
+              const target = isZunno ? "_blank" : "_self";
+              const rel = isZunno ? "noopener noreferrer" : undefined;
+              
+              return (
+                <a
+                  key={item}
+                  href={href}
+                  target={target}
+                  rel={rel}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="px-4 py-3 text-blue-50 uppercase font-general text-sm hover:bg-violet-300/10 hover:text-violet-300 rounded-lg transition-all duration-300 hover:translate-x-2"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  {item}
+                </a>
+              );
+            })}
+            <div className="pt-2 border-t border-violet-300/20">
+              <Button
+                id="mobile-play-button"
+                title="PLAY NOW"
+                rightIcon={<FaGamepad />}
+                containerClass="w-full flex items-center justify-center gap-1"
+                variant="gaming"
+              />
+            </div>
+          </div>
+        </div>
       </header>
     </div>
   );
