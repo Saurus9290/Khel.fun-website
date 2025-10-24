@@ -13,18 +13,76 @@ const About = () => {
     const GRID_SIZE = 4; // 4x4 grid = 16 cubes
     const cubes = [];
     
-    // Create cube grid
+    // Video sources for the cubes
+    const videoSources = [
+      '/videos/hero-1.mp4',
+      '/videos/hero-2.mp4',
+      '/videos/hero-3.mp4',
+      '/videos/hero-4.mp4',
+      '/videos/feature-1.mp4',
+      '/videos/feature-2.mp4',
+      '/videos/feature-3.mp4',
+      '/videos/feature-4.mp4',
+      '/videos/feature-5.mp4',
+      '/videos/hero-1.mp4', // Repeat for 16 cubes
+      '/videos/hero-2.mp4',
+      '/videos/hero-3.mp4',
+      '/videos/hero-4.mp4',
+      '/videos/feature-1.mp4',
+      '/videos/feature-2.mp4',
+      '/videos/feature-3.mp4',
+    ];
+    
+    // Create cube grid with videos
     for (let row = 0; row < GRID_SIZE; row++) {
       for (let col = 0; col < GRID_SIZE; col++) {
+        const cubeIndex = row * GRID_SIZE + col;
         const cube = document.createElement('div');
         cube.className = 'cube-piece';
-        cube.style.backgroundImage = 'url(img/about.webp)';
-        cube.style.backgroundSize = `${GRID_SIZE * 100}% ${GRID_SIZE * 100}%`;
-        cube.style.backgroundPosition = `${(col * 100) / (GRID_SIZE - 1)}% ${(row * 100) / (GRID_SIZE - 1)}%`;
+        
+        // Create video element
+        const video = document.createElement('video');
+        video.src = videoSources[cubeIndex];
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.preload = 'metadata';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+        video.style.borderRadius = '8px';
+        video.style.display = 'block';
+        video.style.transition = 'all 0.3s ease';
+        
+        // Stagger video playback for visual effect
+        setTimeout(() => {
+          video.play().catch(() => {
+            // Fallback to gradient if video fails
+            cube.style.background = `linear-gradient(135deg, hsl(${cubeIndex * 25}, 70%, 60%), hsl(${cubeIndex * 25 + 60}, 70%, 70%))`;
+          });
+        }, cubeIndex * 100); // Stagger by 100ms per cube
+        
+        cube.appendChild(video);
         cube.style.gridColumn = col + 1;
         cube.style.gridRow = row + 1;
         cube.style.setProperty('--row', row);
         cube.style.setProperty('--col', col);
+        cube.style.borderRadius = '8px';
+        cube.style.overflow = 'hidden';
+        cube.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+        cube.style.transition = 'all 0.3s ease';
+        cube.style.cursor = 'pointer';
+        
+        // Add hover effect
+        cube.addEventListener('mouseenter', () => {
+          cube.style.transform = 'scale(1.05)';
+          cube.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+        });
+        
+        cube.addEventListener('mouseleave', () => {
+          cube.style.transform = 'scale(1)';
+          cube.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+        });
         
         // Add data attributes for animation
         cube.dataset.row = row;
@@ -110,7 +168,14 @@ const About = () => {
     }, 0.7);
 
     return () => {
-      cubes.forEach(cube => cube.remove());
+      cubes.forEach(cube => {
+        const video = cube.querySelector('video');
+        if (video) {
+          video.pause();
+          video.src = '';
+        }
+        cube.remove();
+      });
     };
   });
 

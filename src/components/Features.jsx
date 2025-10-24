@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { TiLocationArrow } from "react-icons/ti";
 
 const BentoTilt = ({ children, className = "" }) => {
   const [transformStyle, setTransformStyle] = useState("");
   const itemRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   // Detect mobile on mount
   useState(() => {
@@ -21,26 +22,38 @@ const BentoTilt = ({ children, className = "" }) => {
     const relativeX = (e.clientX - left) / width;
     const relativeY = (e.clientY - top) / height;
 
-    const tiltX = (relativeY - 0.5) * 5;
-    const tiltY = (relativeX - 0.5) * -5;
+    // Smoother, more subtle tilt with better easing
+    const tiltX = (relativeY - 0.5) * 3; // Reduced from 5 to 3 for smoother effect
+    const tiltY = (relativeX - 0.5) * -3;
 
-    const newTransform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(0.98, 0.98, 0.98)`;
+    const newTransform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(0.99, 0.99, 0.99)`;
     setTransformStyle(newTransform);
+  };
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      setIsHovering(true);
+    }
   };
 
   const handleMouseLeave = () => {
     if (!isMobile) {
       setTransformStyle("");
+      setIsHovering(false);
     }
   };
 
   return (
     <div
       ref={itemRef}
-      className={className}
+      className={`${className} ${isHovering ? 'smooth-hover' : ''}`}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{ transform: isMobile ? 'none' : transformStyle }}
+      style={{ 
+        transform: isMobile ? 'none' : transformStyle,
+        transition: isMobile ? 'none' : 'transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+      }}
     >
       {children}
     </div>
@@ -52,6 +65,14 @@ const BentoCard = ({ src, title, description, players = "1-4", status = "LIVE", 
   const statusColor = isLive ? "border-green-400/50" : "border-yellow-400/50";
   const dotColor = isLive ? "bg-green-400" : "bg-yellow-400";
   const videoRef = useRef(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  useEffect(() => {
+    const m = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setPrefersReducedMotion(m.matches);
+    update();
+    m.addEventListener?.('change', update);
+    return () => m.removeEventListener?.('change', update);
+  }, []);
   
   const handleClick = () => {
     if (isLive && link) {
@@ -69,21 +90,24 @@ const BentoCard = ({ src, title, description, players = "1-4", status = "LIVE", 
   };
   
   return (
-    <div className="group relative size-full">
+    <div className="group relative size-full smooth-hover">
       <video
         ref={videoRef}
         src={src}
         loop
         muted
         playsInline
-        autoPlay
+        autoPlay={!prefersReducedMotion}
         preload="metadata"
         onLoadedData={handleVideoLoad}
-        className="absolute left-0 top-0 size-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+        className="absolute left-0 top-0 size-full object-cover object-center transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110 group-hover:brightness-110"
       />
       
-      {/* Dark overlay on hover */}
-      <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {/* Enhanced overlay with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/60 opacity-0 transition-all duration-500 group-hover:opacity-100" />
+      
+      {/* Subtle glow effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-300/10 via-transparent to-blue-300/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       
       <div className="relative z-10 flex size-full flex-col justify-between p-5 text-blue-50">
         {/* Top Status Badges */}
@@ -107,15 +131,18 @@ const BentoCard = ({ src, title, description, players = "1-4", status = "LIVE", 
             </p>
           )}
           
-          {/* Play Button appears on hover - different text for WIP */}
+          {/* Enhanced Play Button with smooth animations */}
           <button 
             onClick={handleClick}
             disabled={!isLive}
-            className={`mt-4 rounded-full border-2 border-white bg-violet-300 px-6 py-2 font-bold uppercase opacity-0 transition-all duration-300 group-hover:opacity-100 ${
-              isLive ? 'hover:bg-white hover:text-violet-300 cursor-pointer' : 'cursor-not-allowed opacity-70'
+            className={`mt-4 rounded-full border-2 border-white bg-violet-300 px-6 py-2 font-bold uppercase opacity-0 transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 ${
+              isLive ? 'hover:bg-white hover:text-violet-300 cursor-pointer smooth-scale' : 'cursor-not-allowed opacity-70'
             }`}
           >
-            {isLive ? 'Play Now →' : 'Coming Soon'}
+            <span className="relative inline-flex items-center gap-2">
+              {isLive ? 'Play Now' : 'Coming Soon'}
+              {isLive && <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>}
+            </span>
           </button>
         </div>
       </div>

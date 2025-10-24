@@ -79,14 +79,15 @@ const Navbar = () => {
       className="fixed inset-x-0 top-4 z-50 h-16 border-none transition-all duration-700 sm:inset-x-6"
     >
       <header className="absolute top-1/2 w-full -translate-y-1/2">
-        <nav className="flex size-full items-center justify-between p-4">
+        <nav className="flex size-full items-center justify-between p-4" role="navigation" aria-label="Primary">
           {/*Logo and product button */}
           <div className="flex items-center gap-7">
             <div className="group relative flex items-center gap-3">
               <div className="relative">
                 <img 
                   src="/img/logo.png" 
-                  alt="logo" 
+                  alt="Khel.fun logo" 
+                  loading="lazy"
                   className="w-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" 
                 />
                 {/* Glow effect on logo */}
@@ -138,6 +139,8 @@ const Navbar = () => {
               onClick={toggleMobileMenu}
               className="md:hidden ml-4 text-blue-50 hover:text-violet-300 transition-colors duration-300"
               aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {isMobileMenuOpen ? (
                 <HiX className="w-6 h-6" />
@@ -150,6 +153,7 @@ const Navbar = () => {
               onClick={toggleAudioIndicator}
               className="ml-6 md:ml-10 flex items-center space-x-0.5 group relative"
               aria-label="Toggle audio"
+              aria-pressed={isAudioPlaying}
             >
               {/* Audio button background glow */}
               <div className="absolute inset-0 -z-10 rounded-lg bg-violet-300/20 blur-md opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -174,11 +178,14 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         <div
+          id="mobile-menu"
           className={`md:hidden absolute top-full left-0 right-0 mt-4 mx-4 rounded-lg bg-black/95 backdrop-blur-xl border border-violet-300/30 overflow-hidden transition-all duration-300 ${
             isMobileMenuOpen
               ? "max-h-96 opacity-100 translate-y-0"
               : "max-h-0 opacity-0 -translate-y-4"
           }`}
+          role="menu"
+          aria-hidden={!isMobileMenuOpen}
         >
           <div className="flex flex-col p-4 space-y-2">
             {navItems.map((item, index) => {
