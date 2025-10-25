@@ -136,7 +136,7 @@ const About = () => {
         scrub: isMobile ? 0.8 : 0.5,
         pin: true,
         pinSpacing: true, // Remove extra spacing to prevent layout shifts
-        anticipatePin: 1,
+        anticipatePin: 0,
       },
     });
 
