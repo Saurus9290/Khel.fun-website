@@ -54,6 +54,15 @@ html {
     font-family: "zentry";
     src: url("/fonts/zentry-regular.woff2") format("woff2");
   }
+
+  /* Knight Warrior OTF for the KHEL.FUN logo */
+  @font-face {
+    font-family: "KnightWarrior";
+    src: url("/fonts/KnightWarrior.otf") format("opentype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
 }
 
 @layer utilities {
@@ -164,9 +173,12 @@ html {
 
   .animated-word {
     @apply special-font font-zentry font-black opacity-0;
-    transform: translate3d(10px, 51px, -60px) rotateY(60deg) rotateX(-40deg);
-    transform-origin: 50% 50% -150px !important;
+    /* Keep words inline and only offset vertically before animation.
+       Removing heavy 3D transforms prevents the slanted/overflow behaviour. */
+    transform: translate3d(0px, 30px, 0px) rotateY(0deg) rotateX(0deg) translateZ(0);
+    transform-origin: 50% 50%;
     will-change: opacity, transform;
+    display: inline-block;
   }
 
   .bento-tilt_1 {
@@ -550,6 +562,161 @@ html {
   animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* K.F mask used in the intro: large letters filled with the BG image */
+.kf-mask-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.kf-mask {
+  font-family:  "zentry", sans-serif;
+  font-weight: 900;
+  /* responsive large size */
+  font-size: clamp(6rem, 20vw, 18rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: transparent;
+  /* show background image inside the letters - keep the image fixed relative to the viewport
+     so the letters move independently while the artwork appears stationary */
+  background-image: url('/bg.png');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  display: inline-block;
+  transform-origin: 50% 50%;
+  /* add a subtle inner shadow to make edges crisp on dark bg */
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.6));
+}
+
+
 .animate-grid-move {
   animation: grid-move 20s linear infinite;
+}
+
+/* Ensure hero panorama fills the viewport without extra gutters
+   - force the landing section to be full-bleed
+   - make image layers cover and anchor to the top so the artwork crops/zooms to fill
+   These rules are scoped to the hero classes and won't affect other components. */
+.landing {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  left: 0;
+  top: 0;
+}
+
+.imagesdiv {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.imagesdiv img.sky,
+.imagesdiv img.bg {
+  position: absolute !important;
+  /* expand slightly and nudge to the top-left so the image fills and covers corners */
+  left: 0% !important;
+  top: -6% !important;
+  width: 140% !important;
+  height: auto !important;
+  object-fit: cover !important;
+  object-position: left top !important; /* anchor to top-left */
+  display: block !important;
+  transform-origin: left top;
+}
+
+.imagesdiv img.character {
+  /* keep character sizing/positioning but ensure it doesn't introduce layout gaps */
+  max-width: 100vw;
+  height: auto;
+}
+
+/* Restore original card hover effects */
+.bento-tilt_1 {
+  @apply relative border-hsla col-span-2 overflow-hidden rounded-md transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)];
+  will-change: transform, box-shadow, border-color;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.bento-tilt_2 {
+  @apply relative col-span-1 row-span-1 overflow-hidden rounded-md transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)];
+  will-change: transform, box-shadow, border-color;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.bento-tilt_1::before,
+.bento-tilt_2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(87, 36, 255, 0.1) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.bento-tilt_1:hover::before,
+.bento-tilt_2:hover::before {
+  opacity: 1;
+}
+
+.bento-tilt_1:hover,
+.bento-tilt_2:hover {
+  transform: translateZ(0) scale(1.02);
+  box-shadow: 
+    0 0 30px rgba(87, 36, 255, 0.4),
+    0 0 60px rgba(87, 36, 255, 0.3),
+    0 0 90px rgba(87, 36, 255, 0.2),
+    inset 0 0 30px rgba(87, 36, 255, 0.15);
+  border-color: rgba(87, 36, 255, 0.8);
+}
+
+/* Zunno Card Special Purple Glow - Only on Hover */
+.zunno-glow-card {
+  border: 2px solid rgba(87, 36, 255, 0.2);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, box-shadow, border-color;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .zunno-glow-card:hover {
+    transform: translateZ(0) scale(1.03);
+    border-color: rgba(87, 36, 255, 0.9);
+    box-shadow: 
+      0 0 50px rgba(87, 36, 255, 0.7),
+      0 0 100px rgba(87, 36, 255, 0.4),
+      0 0 150px rgba(87, 36, 255, 0.3),
+      0 0 200px rgba(87, 36, 255, 0.2),
+      inset 0 0 50px rgba(87, 36, 255, 0.25);
+  }
+}
+
+/* Smooth section transitions */
+.section-transition {
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    rgba(0, 0, 0, 0.1) 25%, 
+    rgba(0, 0, 0, 0.3) 50%, 
+    rgba(0, 0, 0, 0.6) 75%, 
+    rgba(0, 0, 0, 1) 100%
+  );
 }
