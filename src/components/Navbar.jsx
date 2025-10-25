@@ -76,10 +76,12 @@ const Navbar = () => {
   return (
     <div
       ref={navContainerRef}
-      className="fixed inset-x-0 top-4 z-50 h-16 border-none transition-all duration-700 sm:inset-x-6"
+      className="fixed inset-x-0 top-4 z-50 transition-all duration-700"
     >
-      <header className="absolute top-1/2 w-full -translate-y-1/2">
-        <nav className="flex size-full items-center justify-between p-4" role="navigation" aria-label="Primary">
+      {/* Centered glass container */}
+      <div className="mx-4 sm:mx-6 lg:mx-10">
+        <header className="mx-auto max-w-[1400px] bg-gradient-to-r from-sky-400/6 via-violet-300/5 to-amber-200/5 backdrop-blur-lg border border-white/10 rounded-full px-4 py-2 shadow-lg">
+          <nav className="flex size-full items-center justify-between" role="navigation" aria-label="Primary">
           {/*Logo and product button */}
           <div className="flex items-center gap-7">
             <div className="group relative flex items-center gap-3">
@@ -174,52 +176,53 @@ const Navbar = () => {
               ))}
             </button>
           </div>
-        </nav>
+          </nav>
 
-        {/* Mobile Menu */}
-        <div
-          id="mobile-menu"
-          className={`md:hidden absolute top-full left-0 right-0 mt-4 mx-4 rounded-lg bg-black/95 backdrop-blur-xl border border-violet-300/30 overflow-hidden transition-all duration-300 ${
-            isMobileMenuOpen
-              ? "max-h-96 opacity-100 translate-y-0"
-              : "max-h-0 opacity-0 -translate-y-4"
-          }`}
-          role="menu"
-          aria-hidden={!isMobileMenuOpen}
-        >
-          <div className="flex flex-col p-4 space-y-2">
-            {navItems.map((item, index) => {
-              const isZunno = item === "ZUNNO";
-              const href = isZunno ? "https://zunno.xyz" : `#${item.toLowerCase()}`;
-              const target = isZunno ? "_blank" : "_self";
-              const rel = isZunno ? "noopener noreferrer" : undefined;
-              
-              return (
-                <a
-                  key={item}
-                  href={href}
-                  target={target}
-                  rel={rel}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-4 py-3 text-blue-50 uppercase font-general text-sm hover:bg-violet-300/10 hover:text-violet-300 rounded-lg transition-all duration-300 hover:translate-x-2"
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                >
-                  {item}
-                </a>
-              );
-            })}
-            <div className="pt-2 border-t border-violet-300/20">
-              <Button
-                id="mobile-play-button"
-                title="PLAY NOW"
-                rightIcon={<FaGamepad />}
-                containerClass="w-full flex items-center justify-center gap-1"
-                variant="gaming"
-              />
+          {/* Mobile Menu - keep it visually detached from the pill container */}
+          <div
+            id="mobile-menu"
+            className={`md:hidden mt-3 rounded-lg bg-black/95 backdrop-blur-xl border border-violet-300/30 overflow-hidden transition-all duration-300 ${
+              isMobileMenuOpen
+                ? "max-h-96 opacity-100 translate-y-0"
+                : "max-h-0 opacity-0 -translate-y-4"
+            }`}
+            role="menu"
+            aria-hidden={!isMobileMenuOpen}
+          >
+            <div className="flex flex-col p-4 space-y-2">
+              {navItems.map((item, index) => {
+                const isZunno = item === "ZUNNO";
+                const href = isZunno ? "https://zunno.xyz" : `#${item.toLowerCase()}`;
+                const target = isZunno ? "_blank" : "_self";
+                const rel = isZunno ? "noopener noreferrer" : undefined;
+                
+                return (
+                  <a
+                    key={item}
+                    href={href}
+                    target={target}
+                    rel={rel}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="px-4 py-3 text-blue-50 uppercase font-general text-sm hover:bg-violet-300/10 hover:text-violet-300 rounded-lg transition-all duration-300 hover:translate-x-2"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    {item}
+                  </a>
+                );
+              })}
+              <div className="pt-2 border-t border-violet-300/20">
+                <Button
+                  id="mobile-play-button"
+                  title="PLAY NOW"
+                  rightIcon={<FaGamepad />}
+                  containerClass="w-full flex items-center justify-center gap-1"
+                  variant="gaming"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
     </div>
   );
 };

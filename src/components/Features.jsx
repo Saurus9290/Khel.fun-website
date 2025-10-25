@@ -7,9 +7,12 @@ const BentoTilt = ({ children, className = "" }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
-  // Detect mobile on mount
-  useState(() => {
-    setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+  // Detect mobile on mount and on resize
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
   }, []);
 
   const handleMouseMove = (e) => {
@@ -156,7 +159,7 @@ const Features = () => {
       <div className="container mx-auto px-3 md:px-10">
         <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh] zunno-glow-card">
           <BentoCard
-            src="videos/feature-1.mp4"
+            src="/videos/feature-1.mp4"
             title="Zunno"
             description="Experience the thrill of traditional Zunno game on blockchain"
             players="2-4"
@@ -168,7 +171,7 @@ const Features = () => {
         <div className="grid h-[135vh] grid-cols-2 grid-rows-3 gap-7">
             <BentoTilt className="bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2">
                 <BentoCard 
-                  src="videos/feature-2.mp4"
+                  src="/videos/feature-2.mp4"
                   title="POKER"
                   description="Classic Texas Hold'em with crypto stakes - Coming Soon"
                   players="2-8"
@@ -178,7 +181,7 @@ const Features = () => {
 
             <BentoTilt className="bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0">
                 <BentoCard 
-                  src="videos/feature-3.mp4"
+                  src="/videos/feature-3.mp4"
                   title="3-PATTI"
                   description="Indian card game favorite with blockchain rewards - Coming Soon"
                   players="2-6"
@@ -188,7 +191,7 @@ const Features = () => {
 
             <BentoTilt className="bento-tilt_1 me-14 md:col-span-1 md:me-0">
                 <BentoCard 
-                  src="videos/feature-4.mp4"
+                  src="/videos/feature-4.mp4"
                   title="TIC TAC TOE"
                   description="Quick matches, instant payouts - Coming Soon"
                   players="2"
@@ -206,7 +209,7 @@ const Features = () => {
 
             <BentoTilt className="bento-tilt_2">
                 <video 
-                 src="videos/feature-5.mp4"
+                 src="/videos/feature-5.mp4"
                  loop
                  muted
                  autoPlay

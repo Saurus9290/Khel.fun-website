@@ -63,13 +63,14 @@ const Hero = () => {
 
     // Give sky/bg/character/text initial zoom/rotation values (will animate to identity)
     gsap.set(".sky", { scale: 1.3, rotate: -15, transformOrigin: "50% 50%" });
-    gsap.set(".bg", { scale: 1.8, rotate: -3, transformOrigin: "50% 50%" });
+    gsap.set(".bg", { scale: 2, rotate: -3, transformOrigin: "50% 50%" });
+    // reduce character base size by ~20% (scale multiplier 0.8)
     gsap.set(".character", {
       bottom: "-100%",
       left: "50%",
       x: "-50%",
       rotate: -20,
-      scale: 1.3,
+      scale: 0.8, // 1.3 * 0.8 ≈ 1.04
       transformOrigin: "50% 50%",
     });
     gsap.set(".text", { scale: 1.1, rotate: -10, transformOrigin: "50% 50%" });
@@ -155,7 +156,7 @@ const Hero = () => {
       ".character",
       {
         opacity: 1,
-        scale: 0.9, // final slightly smaller so the character isn't overwhelming
+        scale: 0.72, // reduced by ~20% from 0.9 -> 0.72
         x: "-50%",
         bottom: "-15%", // raise a bit to avoid cut-off and reduce top black gap
         rotate: 0,
@@ -199,7 +200,7 @@ const Hero = () => {
 
     // Panorama: gentle horizontal parallax pan for layered depth
     gsap.to(".sky", {
-      xPercent: -8,
+      xPercent: 0,
       duration: 20,
       ease: "sine.inOut",
       yoyo: true,
@@ -208,7 +209,8 @@ const Hero = () => {
     });
 
     gsap.to(".bg", {
-      xPercent: -4,
+      scale: 2, 
+      xPercent: 0,
       duration: 28,
       ease: "sine.inOut",
       yoyo: true,
@@ -226,6 +228,16 @@ const Hero = () => {
       delay: 2.5,
     });
 
+    // Animate the overlay fade by adding class
+    gsap.to(".overlay-fade", {
+      delay: 3,
+      duration: 0.1,
+      ease: "none",
+      onComplete: () => {
+        document.querySelector(".overlay-fade")?.classList.add("show-overlay");
+      }
+    });
+
   }, [showContent]);
 
   return (
@@ -234,11 +246,11 @@ const Hero = () => {
       {!showContent && (
         <div className="vi-mask-group fixed inset-0 z-[200] flex items-center justify-center bg-black">
           <div className="flex flex-col items-center gap-8">
-            {/* Logo or Brand */}
-            <div className="text-6xl font-black text-white" style={{ fontFamily: '"knight-warrior", "zentry", "General Sans", sans-serif' }}>
-              KHEL<span className="text-yellow-400">.FUN</span>
+            {/* K.F mask - letters filled with the background image */}
+            <div className="kf-mask-wrapper">
+              <div className="kf-mask">K.F</div>
             </div>
-            
+
             {/* Spinner */}
             <div className="three-body">
               <div className="three-body__dot" />
@@ -255,10 +267,10 @@ const Hero = () => {
       {showContent && (
         <>
           <div 
-            className="main w-full" 
+            className="main w-full overlay-fade" 
             ref={mainRef}
           >
-            <div className="landing overflow-hidden relative w-full h-screen bg-black">
+            <div className="landing overflow-hidden relative w-full h-screen bg-transparent">
               
               {/* Images Container */}
               <div className="imagesdiv relative overflow-hidden w-full h-screen">
@@ -290,6 +302,8 @@ const Hero = () => {
               <BottomBar />
             </div>
           </div>
+
+
 
           {/* Additional Sections */}
           <div className="relative">
