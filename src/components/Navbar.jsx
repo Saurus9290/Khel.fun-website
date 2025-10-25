@@ -116,9 +116,22 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-2">
               {navItems.map((item, index) => {
                 const isZunno = item === "ZUNNO";
-                const href = isZunno ? "https://zunno.xyz" : `#${item.toLowerCase()}`;
-                const target = isZunno ? "_blank" : "_self";
-                const rel = isZunno ? "noopener noreferrer" : undefined;
+                const is3Patti = item === "3-PATTI";
+                let href, target, rel;
+                
+                if (isZunno) {
+                  href = "https://farcaster.xyz/miniapps/sT0wxMVbxIg_/zunno";
+                  target = "_blank";
+                  rel = "noopener noreferrer";
+                } else if (is3Patti) {
+                  href = "https://3-patti-nu.vercel.app/";
+                  target = "_blank";
+                  rel = "noopener noreferrer";
+                } else {
+                  href = `#${item.toLowerCase()}`;
+                  target = "_self";
+                  rel = undefined;
+                }
                 
                 return (
                   <a

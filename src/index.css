@@ -23,10 +23,8 @@ html {
   body {
     touch-action: pan-y;
   }
-
-  input,
-  textarea,
-  select {
+  
+  input, textarea, select {
     font-size: 16px !important;
   }
 }
@@ -111,7 +109,6 @@ html {
       opacity: 0;
       transform: translateY(-10px);
     }
-
     to {
       opacity: 1;
       transform: translateY(0);
@@ -122,7 +119,6 @@ html {
     0% {
       transform: translateX(-100%);
     }
-
     100% {
       transform: translateX(100%);
     }
@@ -156,7 +152,7 @@ html {
   }
 
   .hero-heading-glow {
-    text-shadow:
+    text-shadow: 
       0 0 10px rgba(87, 36, 255, 0.5),
       0 0 20px rgba(87, 36, 255, 0.3),
       0 0 30px rgba(87, 36, 255, 0.2);
@@ -198,10 +194,12 @@ html {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg,
-        transparent 0%,
-        rgba(87, 36, 255, 0.1) 50%,
-        transparent 100%);
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(87, 36, 255, 0.1) 50%,
+      transparent 100%
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -215,7 +213,7 @@ html {
 
   .bento-tilt_1:hover,
   .bento-tilt_2:hover {
-    box-shadow:
+    box-shadow: 
       0 0 20px rgba(87, 36, 255, 0.3),
       0 0 40px rgba(87, 36, 255, 0.2),
       inset 0 0 20px rgba(87, 36, 255, 0.1);
@@ -231,7 +229,7 @@ html {
   @media (hover: hover) and (pointer: fine) {
     .zunno-glow-card:hover {
       border-color: rgba(87, 36, 255, 0.8);
-      box-shadow:
+      box-shadow: 
         0 0 40px rgba(87, 36, 255, 0.6),
         0 0 80px rgba(87, 36, 255, 0.3),
         0 0 120px rgba(87, 36, 255, 0.2),
@@ -295,7 +293,7 @@ html {
     height: 100%;
     background-size: 400% 400%;
     border-radius: 8px;
-    box-shadow:
+    box-shadow: 
       0 4px 15px rgba(87, 36, 255, 0.2),
       inset 0 0 20px rgba(0, 0, 0, 0.1);
     transform-style: preserve-3d;
@@ -309,10 +307,12 @@ html {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg,
-        rgba(87, 36, 255, 0.15) 0%,
-        transparent 50%,
-        rgba(79, 183, 221, 0.15) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(87, 36, 255, 0.15) 0%,
+      transparent 50%,
+      rgba(79, 183, 221, 0.15) 100%
+    );
     border-radius: 8px;
     opacity: 0.5;
     mix-blend-mode: overlay;
@@ -324,9 +324,11 @@ html {
     content: '';
     position: absolute;
     inset: -2px;
-    background: linear-gradient(45deg,
-        rgba(87, 36, 255, 0.5),
-        rgba(79, 183, 221, 0.5));
+    background: linear-gradient(
+      45deg,
+      rgba(87, 36, 255, 0.5),
+      rgba(79, 183, 221, 0.5)
+    );
     border-radius: 8px;
     opacity: 0;
     filter: blur(10px);
@@ -335,12 +337,9 @@ html {
   }
 
   @keyframes shimmer {
-
-    0%,
-    100% {
+    0%, 100% {
       opacity: 0.3;
     }
-
     50% {
       opacity: 0.7;
     }
@@ -352,7 +351,7 @@ html {
       height: 70vw;
       perspective: 800px;
     }
-
+    
     .cube-piece {
       border-radius: 4px;
       gap: 2px;
@@ -421,12 +420,10 @@ html {
     height: 4px;
     transform: translateY(-0px);
   }
-
   50% {
     height: 16px;
     transform: translateY(-4px);
   }
-
   100% {
     height: 4px;
     transform: translateY(-0px);
@@ -486,7 +483,8 @@ html {
 .three-body__dot:nth-child(2)::after {
   bottom: 0;
   left: 0;
-  animation: wobble1 var(--uib-speed) infinite calc(var(--uib-speed) * -0.15) ease-in-out;
+  animation: wobble1 var(--uib-speed) infinite calc(var(--uib-speed) * -0.15)
+    ease-in-out;
 }
 
 .three-body__dot:nth-child(3) {
@@ -512,7 +510,6 @@ html {
 }
 
 @keyframes wobble1 {
-
   0%,
   100% {
     transform: translateY(0%) scale(1);
@@ -526,7 +523,6 @@ html {
 }
 
 @keyframes wobble2 {
-
   0%,
   100% {
     transform: translateY(0%) scale(1);
@@ -540,16 +536,13 @@ html {
 }
 
 @keyframes pulse-glow {
-
-  0%,
-  100% {
-    text-shadow:
+  0%, 100% { 
+    text-shadow: 
       0 0 10px rgba(87, 36, 255, 0.5),
       0 0 20px rgba(87, 36, 255, 0.3);
   }
-
-  50% {
-    text-shadow:
+  50% { 
+    text-shadow: 
       0 0 20px rgba(87, 36, 255, 0.8),
       0 0 40px rgba(87, 36, 255, 0.5),
       0 0 60px rgba(87, 36, 255, 0.3);
@@ -560,7 +553,6 @@ html {
   0% {
     transform: translate(0, 0);
   }
-
   100% {
     transform: translate(4rem, 4rem);
   }
@@ -579,7 +571,7 @@ html {
 }
 
 .kf-mask {
-  font-family: "zentry", sans-serif;
+  font-family:  "zentry", sans-serif;
   font-weight: 900;
   /* responsive large size */
   font-size: clamp(6rem, 20vw, 18rem);
@@ -599,7 +591,7 @@ html {
   display: inline-block;
   transform-origin: 50% 50%;
   /* add a subtle inner shadow to make edges crisp on dark bg */
-  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.6));
 }
 
 
@@ -633,12 +625,11 @@ html {
   position: absolute !important;
   /* expand slightly and nudge to the top-left so the image fills and covers corners */
   left: 0% !important;
-  top: -10% !important;
-  width: 120% !important;
-  height: 120% !important;
+  top: -6% !important;
+  width: 140% !important;
+  height: auto !important;
   object-fit: cover !important;
-  object-position: left top !important;
-  /* anchor to top-left */
+  object-position: left top !important; /* anchor to top-left */
   display: block !important;
   transform-origin: left top;
 }
@@ -649,56 +640,83 @@ html {
   height: auto;
 }
 
-/* Overlay fade for smooth section transitions */
-.overlay-fade {
-  position: relative;
+/* Restore original card hover effects */
+.bento-tilt_1 {
+  @apply relative border-hsla col-span-2 overflow-hidden rounded-md transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)];
+  will-change: transform, box-shadow, border-color;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-.overlay-fade::after {
+.bento-tilt_2 {
+  @apply relative col-span-1 row-span-1 overflow-hidden rounded-md transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)];
+  will-change: transform, box-shadow, border-color;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.bento-tilt_1::before,
+.bento-tilt_2::before {
   content: "";
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 40%;
-  background: linear-gradient(to bottom, transparent, #DFDFF0);
-  pointer-events: none;
-  z-index: 30;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(87, 36, 255, 0.1) 50%,
+    transparent 100%
+  );
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  z-index: 10;
 }
 
-/* Floating animation for particles */
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-/* Responsive overlay fade */
-@media (max-width: 768px) {
-  .overlay-fade::after {
-    height: 50%;
-  }
-}
-
-@media (max-width: 480px) {
-  .overlay-fade::after {
-    height: 40%;
-  }
-}
-
-/* Animation for overlay fade appearance */
-.overlay-fade.show-overlay::after {
+.bento-tilt_1:hover::before,
+.bento-tilt_2:hover::before {
   opacity: 1;
+}
+
+.bento-tilt_1:hover,
+.bento-tilt_2:hover {
+  transform: translateZ(0) scale(1.02);
+  box-shadow: 
+    0 0 30px rgba(87, 36, 255, 0.4),
+    0 0 60px rgba(87, 36, 255, 0.3),
+    0 0 90px rgba(87, 36, 255, 0.2),
+    inset 0 0 30px rgba(87, 36, 255, 0.15);
+  border-color: rgba(87, 36, 255, 0.8);
+}
+
+/* Zunno Card Special Purple Glow - Only on Hover */
+.zunno-glow-card {
+  border: 2px solid rgba(87, 36, 255, 0.2);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, box-shadow, border-color;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .zunno-glow-card:hover {
+    transform: translateZ(0) scale(1.03);
+    border-color: rgba(87, 36, 255, 0.9);
+    box-shadow: 
+      0 0 50px rgba(87, 36, 255, 0.7),
+      0 0 100px rgba(87, 36, 255, 0.4),
+      0 0 150px rgba(87, 36, 255, 0.3),
+      0 0 200px rgba(87, 36, 255, 0.2),
+      inset 0 0 50px rgba(87, 36, 255, 0.25);
+  }
+}
+
+/* Smooth section transitions */
+.section-transition {
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    rgba(0, 0, 0, 0.1) 25%, 
+    rgba(0, 0, 0, 0.3) 50%, 
+    rgba(0, 0, 0, 0.6) 75%, 
+    rgba(0, 0, 0, 1) 100%
+  );
 }

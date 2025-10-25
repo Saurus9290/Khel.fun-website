@@ -28,18 +28,18 @@ const Hero = () => {
       ease: "Power4.easeInOut",
       transformOrigin: "50% 50%",
     })
-    // Step 2: Scale up and fade out
-    .to(".vi-mask-group", {
-      scale: 10,
-      duration: 2,
-      delay: -1.8,
-      ease: "Expo.easeInOut",
-      transformOrigin: "50% 50%",
-      opacity: 0,
-      onComplete: function () {
-        setShowContent(true);
-      },
-    });
+      // Step 2: Scale up and fade out
+      .to(".vi-mask-group", {
+        scale: 10,
+        duration: 2,
+        delay: -1.8,
+        ease: "Expo.easeInOut",
+        transformOrigin: "50% 50%",
+        opacity: 0,
+        onComplete: function () {
+          setShowContent(true);
+        },
+      });
   }, []);
 
   // Enhanced main content animation
@@ -130,52 +130,52 @@ const Hero = () => {
       duration: 1.5,
       ease: "expo.out",
     })
-    .to(
-      ".sky",
-      {
-        opacity: 1,
-        scale: 1,
-        rotate: 0,
-        duration: 1.2,
-        ease: "power2.inOut",
-      },
-      "-=1.2"
-    )
-    .to(
-      ".bg",
-      {
-        opacity: 1,
-        scale: 1,
-        rotate: 0,
-        duration: 1.2,
-        ease: "power2.inOut",
-      },
-      "-=1"
-    )
-    .to(
-      ".character",
-      {
-        opacity: 1,
-        scale: 0.72, // reduced by ~20% from 0.9 -> 0.72
-        x: "-50%",
-        bottom: "-15%", // raise a bit to avoid cut-off and reduce top black gap
-        rotate: 0,
-        duration: 1.5,
-        ease: "back.out(1.2)",
-      },
-      "-=0.8"
-    )
-    .to(
-      ".text",
-      {
-        opacity: 1,
-        scale: 1,
-        rotate: 0,
-        duration: 1,
-        ease: "back.out(1.4)",
-      },
-      "-=1"
-    );
+      .to(
+        ".sky",
+        {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          duration: 1.2,
+          ease: "power2.inOut",
+        },
+        "-=1.2"
+      )
+      .to(
+        ".bg",
+        {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          duration: 1.2,
+          ease: "power2.inOut",
+        },
+        "-=1"
+      )
+      .to(
+        ".character",
+        {
+          opacity: 1,
+          scale: 0.72, // reduced by ~20% from 0.9 -> 0.72
+          x: "-50%",
+          bottom: "-15%", // raise a bit to avoid cut-off and reduce top black gap
+          rotate: 0,
+          duration: 1.5,
+          ease: "back.out(1.2)",
+        },
+        "-=0.8"
+      )
+      .to(
+        ".text",
+        {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          duration: 1,
+          ease: "back.out(1.4)",
+        },
+        "-=1"
+      );
 
     // Add parallax effect on scroll
     gsap.to([".sky", ".bg"], {
@@ -209,7 +209,7 @@ const Hero = () => {
     });
 
     gsap.to(".bg", {
-      scale: 2, 
+      scale: 2,
       xPercent: 0,
       duration: 28,
       ease: "sine.inOut",
@@ -226,16 +226,6 @@ const Hero = () => {
       yoyo: true,
       repeat: -1,
       delay: 2.5,
-    });
-
-    // Animate the overlay fade by adding class
-    gsap.to(".overlay-fade", {
-      delay: 3,
-      duration: 0.1,
-      ease: "none",
-      onComplete: () => {
-        document.querySelector(".overlay-fade")?.classList.add("show-overlay");
-      }
     });
 
   }, [showContent]);
@@ -266,12 +256,12 @@ const Hero = () => {
       {/* Main Content */}
       {showContent && (
         <>
-          <div 
-            className="main w-full overlay-fade" 
+          <div
+            className="main w-full"
             ref={mainRef}
           >
             <div className="landing overflow-hidden relative w-full h-screen bg-transparent">
-              
+
               {/* Images Container */}
               <div className="imagesdiv relative overflow-hidden w-full h-screen">
                 {/* Sky Background */}
@@ -280,7 +270,7 @@ const Hero = () => {
                   src="/bg.png"
                   alt="Sky background"
                 />
-                
+
                 {/* Main Background */}
                 <img
                   className="absolute bg top-0 left-0 w-full h-full object-cover"
@@ -302,8 +292,6 @@ const Hero = () => {
               <BottomBar />
             </div>
           </div>
-
-
 
           {/* Additional Sections */}
           <div className="relative">
