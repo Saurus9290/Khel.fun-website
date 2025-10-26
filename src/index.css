@@ -75,15 +75,38 @@ html {
   }
 
   .nav-hover-btn-enhanced {
-    @apply relative px-4 py-2 font-general text-xs uppercase text-blue-50 cursor-pointer overflow-hidden rounded-lg transition-all duration-300;
+    @apply relative px-4 py-2 font-general text-sm uppercase text-white cursor-pointer overflow-hidden rounded-lg transition-all duration-300;
     animation: fadeInDown 0.5s ease-out forwards;
     opacity: 0;
+    /* stronger translucent pill for contrast */
+    background: rgba(8, 10, 20, 0.14);
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    padding-left: 14px;
+    padding-right: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
   }
 
   .nav-hover-btn-enhanced:hover {
-    @apply text-violet-300 bg-white/5;
-    box-shadow: 0 0 20px rgba(87, 36, 255, 0.3);
+    @apply text-white;
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 10px 30px rgba(87, 36, 255, 0.12);
   }
+
+  /* Make primary CTA stand out more (PLAY NOW) using a small enhancement.
+     This targets the button inside the nav which uses the .nav-hover-btn-enhanced
+     utility for links and the Button component for the CTA. */
+  .nav-cta-enhanced {
+    background: linear-gradient(90deg, #7C3AED, #6EE7B7);
+    color: white !important;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    box-shadow: 0 10px 30px rgba(124,58,237,0.18);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+  .nav-cta-enhanced:active { transform: translateY(1px) scale(0.995); }
 
   .nav-link-text {
     @apply relative z-10 transition-transform duration-300;
@@ -125,9 +148,43 @@ html {
   }
 
   .floating-nav {
-    @apply bg-black/80 rounded-lg border border-violet-300/20;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(87, 36, 255, 0.1);
+   /* Keep floating-nav visually lightweight: transparent base + backdrop blur.
+     Remove any gradient or heavy box-shadow so the nav doesn't leave a dark strip. */
+   background: transparent;
+   border-radius: 9999px; /* match pill shape */
+   border: 1px solid rgba(255,255,255,0.04);
+   backdrop-filter: blur(10px) saturate(120%);
+   -webkit-backdrop-filter: blur(10px) saturate(120%);
+   box-shadow: none;
+  /* Improve rendering stability when the nav is being transformed/animated.
+    Promote to its own layer and hint the browser to composite this element
+    separately so subpixel hairlines and repaint artifacts are minimized. */
+  will-change: transform, opacity, backdrop-filter;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background-clip: padding-box; /* prevent border bleeding/artifacts */
+  }
+
+  /* When the floating-nav modifier is present, neutralize the inner header
+    border to avoid stacked 1px borders showing as thin lines during scroll
+    and slightly soften the shadow so it looks consistent while floating. */
+  .floating-nav header {
+   border-color: transparent !important;
+   box-shadow: 0 8px 28px rgba(0,0,0,0.06) !important;
+   -webkit-backdrop-filter: blur(12px) saturate(120%);
+   backdrop-filter: blur(12px) saturate(120%);
+   background-clip: padding-box;
+  }
+
+  /* Explicitly remove any border on the header to avoid a thin white
+     hairline appearing when the navbar transitions or when classes toggle. */
+  .site-nav-header {
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.06) !important;
+    background-clip: padding-box;
   }
 
   .absolute-center {
@@ -299,7 +356,9 @@ html {
     transform-style: preserve-3d;
     will-change: transform, opacity;
     transition: box-shadow 0.3s ease;
-    backface-visibility: visible;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
@@ -708,6 +767,7 @@ html {
       0 0 200px rgba(87, 36, 255, 0.2),
       inset 0 0 50px rgba(87, 36, 255, 0.25);
   }
+
 }
 
 /* Smooth section transitions */

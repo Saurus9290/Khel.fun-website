@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import AnimatedTitle from "./AnimatedTitle";
 
-gsap.registerPlugin(ScrollTrigger);
+// ScrollTrigger is registered once in src/main.jsx
 
 const About = () => {
   const cubesContainerRef = useRef(null);
@@ -33,7 +33,9 @@ const About = () => {
       }
     });
 
-    const GRID_SIZE = 4; // 4x4 grid = 16 cubes
+  // Responsive grid size: use a 3x3 grid on narrow screens to reduce
+  // decode/paint load, else use 4x4 on larger viewports.
+  const GRID_SIZE = (typeof window !== 'undefined' && window.innerWidth < 768) ? 3 : 4;
     const cubes = [];
 
     // Video sources for the cubes
@@ -56,7 +58,7 @@ const About = () => {
       '/videos/feature-3.mp4',
     ];
 
-    // Create cube grid with videos
+  // Create cube grid with videos
     for (let row = 0; row < GRID_SIZE; row++) {
       for (let col = 0; col < GRID_SIZE; col++) {
         const cubeIndex = row * GRID_SIZE + col;
@@ -82,13 +84,8 @@ const About = () => {
         cube.style.opacity = '1';
         cube.style.visibility = 'visible';
 
-        // Stagger video playback for visual effect
-        setTimeout(() => {
-          video.play().catch(() => {
-            // Keep the gradient fallback
-            console.log(`Video failed to load for cube ${cubeIndex}`);
-          });
-        }, cubeIndex * 100); // Stagger by 100ms per cube
+        // Do not autoplay every video immediately; visibility-based playback
+        // will be handled by an IntersectionObserver after the grid is built.
 
         cube.appendChild(video);
         cube.style.gridColumn = col + 1;
@@ -123,66 +120,163 @@ const About = () => {
       }
     }
 
+    
+    // Ensure the container is visible and laid out as a grid before the
+    // ScrollTrigger-driven timeline runs. Without this, the container can
+    // have no explicit size and the cubes appear to "pop in" only when the
+    // ScrollTrigger start position hits — a poor UX.
+    if (cubesContainerRef.current) {
+      const container = cubesContainerRef.current;
+      // Basic grid layout so elements occupy space immediately
+      container.style.display = 'grid';
+      container.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
+      container.style.gridTemplateRows = `repeat(${GRID_SIZE}, 1fr)`;
+      container.style.gap = '16px';
+      container.style.width = 'min(1200px, 90vw)';
+      container.style.margin = '0 auto';
+      container.style.boxSizing = 'border-box';
+      // Give it a visible min height so the user sees content before scrolling
+      // into the pinned area. This prevents the sudden pop-in effect.
+      container.style.minHeight = window.innerWidth < 768 ? '45vh' : '60vh';
+      container.style.padding = '20px';
+      container.style.opacity = '1';
+      container.style.transition = 'opacity 0.45s ease';
+    }
+
+    // IntersectionObserver: play videos only when their cube is mostly visible.
+    // This dramatically reduces decode/paint load during fast scrolling.
+    // Play/pause videos only when they are close to the viewport center.
+    // Use a small rootMargin to start playback slightly before fully visible.
+    const observerOptions = { root: null, rootMargin: '0px 0px -10% 0px', threshold: [0.25, 0.5] };
+
+    // Limit concurrent playing videos to avoid decode/paint overload.
+    const MAX_PLAYING = 3;
+    const playingSet = new Set(); // set of video elements currently allowed to play
+
+    const getDistanceFromViewportCenter = (el) => {
+      const r = el.getBoundingClientRect();
+      const elCenterX = r.left + r.width / 2;
+      const elCenterY = r.top + r.height / 2;
+      const vpCenterX = window.innerWidth / 2;
+      const vpCenterY = window.innerHeight / 2;
+      const dx = elCenterX - vpCenterX;
+      const dy = elCenterY - vpCenterY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const prunePlaying = () => {
+      if (playingSet.size <= MAX_PLAYING) return;
+      // build array of {vid, distance}
+      const arr = Array.from(playingSet).map((v) => ({ v, d: getDistanceFromViewportCenter(v.closest('.cube-piece')) }));
+      // sort by distance ascending (closest first)
+      arr.sort((a, b) => a.d - b.d);
+      // keep closest MAX_PLAYING, pause the rest
+      arr.slice(MAX_PLAYING).forEach((x) => {
+  try { x.v.pause(); } catch { /* ignore */ }
+        playingSet.delete(x.v);
+      });
+    };
+
+    const ioCallback = (entries) => {
+      // Batch updates to avoid layout thrash
+      window.requestAnimationFrame(() => {
+        entries.forEach((entry) => {
+          const cubeEl = entry.target;
+          const vid = cubeEl.querySelector('video');
+          if (!vid) return;
+
+          if (entry.intersectionRatio >= 0.25) {
+            // Try to play; will register into playingSet on success
+            vid.play().then(() => {
+              playingSet.add(vid);
+              prunePlaying();
+            }).catch(() => {
+              // ignore playback errors (autoplay policy etc.)
+            });
+          } else {
+            // If element is no longer visible enough, pause and remove from set
+            try { vid.pause(); } catch { /* ignore */ }
+            playingSet.delete(vid);
+          }
+        });
+      });
+    };
+
+    const observer = new IntersectionObserver(ioCallback, observerOptions);
+    cubes.forEach((c) => observer.observe(c));
+
     // Check if mobile
     const isMobile = window.innerWidth < 768;
 
 
+
+    // Add conservative lag smoothing to help GSAP interpolate through frame drops
+  try { gsap.ticker.lagSmoothing(200, 16); } catch { /* ignore */ }
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#clip",
         start: isMobile ? "top center" : "center center",
         end: isMobile ? "+=600 center" : "+=1200 center", // Reduced scroll distance
-        scrub: isMobile ? 0.8 : 0.5,
+  // Slightly longer scrub so GSAP has more room to interpolate during
+  // fast scrolls; this smooths the mapping between scroll and timeline.
+  scrub: isMobile ? 0.6 : 0.4,
         pin: true,
         pinSpacing: true, // Remove extra spacing to prevent layout shifts
         anticipatePin: 0,
       },
     });
 
-    // Animate cubes splitting and moving
-    cubes.forEach((cube) => {
-      const row = parseInt(cube.dataset.row);
-      const col = parseInt(cube.dataset.col);
+    // Animate cubes splitting and moving (consolidated tween)
+    // Use per-target functions and a stagger function based on distance from
+    // center so we only create one tween instead of many small tweens which
+    // can cause ScrollTrigger to jank under heavy scroll.
+    const centerRow = (GRID_SIZE - 1) / 2;
+    const centerCol = (GRID_SIZE - 1) / 2;
 
-      // Checkerboard pattern for alternating movement
-      const isEven = (row + col) % 2 === 0;
-
-      // Calculate distance from center for varied movement
-      const centerRow = (GRID_SIZE - 1) / 2;
-      const centerCol = (GRID_SIZE - 1) / 2;
-      const distanceFromCenter = Math.sqrt(
-        Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2)
-      );
-
-      // Calculate movement direction with more variation
-      const angle = Math.atan2(row - centerRow, col - centerCol);
-      const movementMultiplier = isEven ? 1 : -0.8;
-      const xMove = Math.cos(angle) * distanceFromCenter * 40 * movementMultiplier;
-      const yMove = Math.sin(angle) * distanceFromCenter * 40 * movementMultiplier;
-
-      const rotation = isEven ? 360 : -360;
-      const scale = 1 + (distanceFromCenter * 0.1);
-      const zMove = isEven ? 100 : -100;
-
-      // Stagger the initial explosion based on distance for more organic feel
-      const explosionDelay = distanceFromCenter * 0.02;
-
-      tl.to(cube, {
-        x: xMove,
-        y: yMove,
-        z: zMove,
-        rotationX: isEven ? 180 : 0,
-        rotationY: rotation,
-        rotationZ: isEven ? 90 : -90,
-        scale: Math.min(scale, 1.4), // Slightly more dramatic scale
-        ease: "expo.out", // More dramatic easing for wow factor
-        opacity: 1,
-        boxShadow: isEven
-          ? "0 0 40px rgba(87, 36, 255, 1), 0 0 80px rgba(87, 36, 255, 0.6), 0 0 120px rgba(87, 36, 255, 0.3)"
-          : "0 0 40px rgba(79, 183, 221, 1), 0 0 80px rgba(79, 183, 221, 0.6), 0 0 120px rgba(79, 183, 221, 0.3)",
-      }, explosionDelay); // Staggered explosion start
-    });
+    tl.to(cubes, {
+      x: (i, el) => {
+        const row = parseInt(el.dataset.row);
+        const col = parseInt(el.dataset.col);
+        const isEven = (row + col) % 2 === 0;
+        const distanceFromCenter = Math.sqrt(Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2));
+        const angle = Math.atan2(row - centerRow, col - centerCol);
+        const movementMultiplier = isEven ? 1 : -0.8;
+        return Math.cos(angle) * distanceFromCenter * 40 * movementMultiplier;
+      },
+      y: (i, el) => {
+        const row = parseInt(el.dataset.row);
+        const col = parseInt(el.dataset.col);
+        const isEven = (row + col) % 2 === 0;
+        const distanceFromCenter = Math.sqrt(Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2));
+        const angle = Math.atan2(row - centerRow, col - centerCol);
+        const movementMultiplier = isEven ? 1 : -0.8;
+        return Math.sin(angle) * distanceFromCenter * 40 * movementMultiplier;
+      },
+      z: (i, el) => {
+        const row = parseInt(el.dataset.row);
+        const isEven = (row + parseInt(el.dataset.col)) % 2 === 0;
+        return isEven ? 100 : -100;
+      },
+      rotationX: (i, el) => ((parseInt(el.dataset.row) + parseInt(el.dataset.col)) % 2 === 0 ? 180 : 0),
+      rotationY: (i, el) => ((parseInt(el.dataset.row) + parseInt(el.dataset.col)) % 2 === 0 ? 360 : -360),
+      rotationZ: (i, el) => ((parseInt(el.dataset.row) + parseInt(el.dataset.col)) % 2 === 0 ? 90 : -90),
+      scale: (i, el) => {
+        const row = parseInt(el.dataset.row);
+        const col = parseInt(el.dataset.col);
+        const distanceFromCenter = Math.sqrt(Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2));
+        return Math.min(1 + (distanceFromCenter * 0.1), 1.4);
+      },
+      opacity: 1,
+      ease: "expo.out",
+      // Stagger based on distance to center (function form)
+      stagger: (i, el) => {
+        const row = parseInt(el.dataset.row);
+        const col = parseInt(el.dataset.col);
+        const dist = Math.sqrt(Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2));
+        return dist * 0.02;
+      }
+    }, 0);
 
     // Expand container with smooth easing
     tl.to(".cube-grid-container", {
@@ -192,42 +286,37 @@ const About = () => {
       ease: "power2.inOut",
     }, 0.1); // Slight delay for better sequencing
 
-    // Create a dramatic pause before the disappearance
-    tl.to({}, { duration: 0.5 }, 0.6); // Pause for dramatic effect
+  // Remove hard pause - it creates a rigid checkpoint. Let the timeline flow
+  // continuously so scrub interpolation stays smooth during fast scrolling.
 
-    // Enhanced fade-out sequence with multiple phases
-    cubes.forEach((cube) => {
-      const row = parseInt(cube.dataset.row);
-      const col = parseInt(cube.dataset.col);
+    // Enhanced fade-out sequence (consolidated tweens)
+    tl.to(cubes, {
+      scale: 0.22,
+      rotationY: "+=120",
+      rotationZ: "+=60",
+      ease: "power2.inOut",
+      duration: 0.7,
+      stagger: (i, el) => {
+        const row = parseInt(el.dataset.row);
+        const col = parseInt(el.dataset.col);
+        const dist = Math.sqrt(Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2));
+        return Math.pow(dist, 1.5) * 0.04;
+      }
+    }, 0.7);
 
-      // Calculate distance from center for staggered fade-out
-      const centerRow = (GRID_SIZE - 1) / 2;
-      const centerCol = (GRID_SIZE - 1) / 2;
-      const distanceFromCenter = Math.sqrt(
-        Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2)
-      );
-
-      // More dramatic staggering with exponential delay
-      const delay = Math.pow(distanceFromCenter, 1.5) * 0.04;
-
-      // Phase 1: Dramatic scale and rotation before fade
-      tl.to(cube, {
-        scale: 0.2,
-        rotationY: "+=180",
-        rotationZ: "+=90",
-        ease: "back.in(2)",
-        duration: 0.4,
-      }, 0.75 + delay);
-
-      // Phase 2: Final disappearance with particle effect
-      tl.to(cube, {
-        opacity: 0,
-        scale: 0,
-        y: "-=50", // Float up as they disappear
-        ease: "power3.in",
-        duration: 0.9,
-      }, 0.85 + delay);
-    });
+    tl.to(cubes, {
+      opacity: 0,
+      scale: 0,
+      y: "-=30",
+      ease: "power2.in",
+      duration: 1.2,
+      stagger: (i, el) => {
+        const row = parseInt(el.dataset.row);
+        const col = parseInt(el.dataset.col);
+        const dist = Math.sqrt(Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2));
+        return Math.pow(dist, 1.5) * 0.04;
+      }
+    }, 0.85);
 
     // Enhanced background effects sequence
     // First intensify the glow as cubes disappear
@@ -293,6 +382,9 @@ const About = () => {
     });
 
     return () => {
+      // disconnect observer to avoid leaks
+  try { observer && observer.disconnect(); } catch { /* ignore */ }
+
       cubes.forEach(cube => {
         const video = cube.querySelector('video');
         if (video) {
