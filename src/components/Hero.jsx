@@ -3,12 +3,13 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import useMouseParallax from "../hooks/useMouseParallax";
+import useIntroAnimation from "../hooks/useIntroAnimation";
 import HeroText from "./HeroText";
 import BottomBar from "./BottomBar";
 import CharacterSection from "./CharacterSection";
 import PrizeKingdomsSection from "./PrizeKingdomsSection";
 
-gsap.registerPlugin(ScrollTrigger);
+// ScrollTrigger plugin is registered at app entry in src/main.jsx
 
 const Hero = () => {
   const [showContent, setShowContent] = useState(false);
@@ -17,30 +18,8 @@ const Hero = () => {
   // Use the mouse parallax hook
   useMouseParallax(mainRef);
 
-  // Intro animation based on your reference code
-  useGSAP(() => {
-    const tl = gsap.timeline();
-
-    // Step 1: Rotate the mask group element
-    tl.to(".vi-mask-group", {
-      rotate: 10,
-      duration: 2,
-      ease: "Power4.easeInOut",
-      transformOrigin: "50% 50%",
-    })
-      // Step 2: Scale up and fade out
-      .to(".vi-mask-group", {
-        scale: 10,
-        duration: 2,
-        delay: -1.8,
-        ease: "Expo.easeInOut",
-        transformOrigin: "50% 50%",
-        opacity: 0,
-        onComplete: function () {
-          setShowContent(true);
-        },
-      });
-  }, []);
+  // Use the intro animation hook to show content when ready
+  useIntroAnimation(setShowContent);
 
   // Enhanced main content animation
   useGSAP(() => {
