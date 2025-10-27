@@ -1,12 +1,16 @@
-import React from "react";
-
 const HeroText = () => (
-  <div className="text text-white flex flex-col gap-3 absolute top-20 left-1/2 -translate-x-1/2 scale-[1.4] rotate-[-10deg]">
-    <h1 
-      style={{ fontFamily: '"KnightWarrior", sans-serif' }} 
-      className="text-[12rem] leading-none text-center"
+  <div className="text text-white absolute inset-0">
+    <h1
+      style={{ fontFamily: '"KnightWarrior", sans-serif' }}
+      className="text-[16rem] leading-none absolute top-20 left-20"
     >
-      khel.fun
+      KHEL
+    </h1>
+    <h1
+      style={{ fontFamily: '"KnightWarrior", sans-serif' }}
+      className="text-[16rem] leading-none absolute bottom-20 right-20"
+    >
+      FUN
     </h1>
   </div>
 );
