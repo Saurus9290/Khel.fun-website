@@ -79,8 +79,8 @@ const Navbar = () => {
       className="fixed inset-x-0 top-4 z-50 transition-all duration-700"
     >
       {/* Centered glass container */}
-      <div className="mx-4 sm:mx-6 lg:mx-10">
-        <header className="mx-auto max-w-[1400px] bg-gradient-to-r from-sky-400/6 via-violet-300/5 to-amber-200/5 backdrop-blur-lg border border-white/10 rounded-full px-4 py-2 shadow-lg">
+    <div className="mx-4 sm:mx-6 lg:mx-10">
+  <header className="mx-auto max-w-[1400px] bg-gradient-to-r from-sky-400/6 via-violet-300/5 to-amber-200/5 backdrop-blur-lg site-nav-header rounded-full px-6 py-3 shadow-lg">
           <nav className="flex size-full items-center justify-between" role="navigation" aria-label="Primary">
           {/*Logo and product button */}
           <div className="flex items-center gap-7">
@@ -90,14 +90,14 @@ const Navbar = () => {
                   src="/img/logo.png" 
                   alt="Khel.fun logo" 
                   loading="lazy"
-                  className="w-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" 
+                  className="w-12 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" 
                 />
                 {/* Glow effect on logo */}
                 <div className="absolute inset-0 -z-10 blur-xl bg-violet-300/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
               
               {/* Brand name - hidden on mobile */}
-              <span className="hidden lg:block font-zentry text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-blue-300 to-violet-300 animate-pulse-slow">
+              <span className="hidden lg:block font-zentry text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-blue-300 to-violet-300 animate-pulse-slow hide-during-intro">
                 KHEL.FUN
               </span>
             </div>

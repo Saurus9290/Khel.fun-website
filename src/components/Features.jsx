@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
-gsap.registerPlugin(ScrollTrigger);
+// ScrollTrigger is registered once in src/main.jsx
 
 const BentoTilt = ({ children, className = "" }) => {
   const [transformStyle, setTransformStyle] = useState("");
@@ -116,6 +116,11 @@ const BentoCard = ({ src, title, description, players = "1-4", status = "LIVE", 
 
       {/* Subtle glow effect on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-violet-300/10 via-transparent to-blue-300/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+    {/* Bottom mask to hide small watermarks (e.g. 'Veo') in video assets.
+      This gently covers the bottom edge with a gradient so the watermark
+      doesn't show through while preserving the visual feel. */}
+     <div className="absolute left-0 right-0 bottom-0 h-12 pointer-events-none bg-gradient-to-t from-black/100 to-transparent md:h-16" />
 
       <div className="relative z-10 flex size-full flex-col justify-between p-5 text-blue-50">
         {/* Top Status Badges */}
@@ -302,7 +307,7 @@ const Features = () => {
 
           <BentoTilt className="bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0">
             <BentoCard
-              src="/videos/feature-3.mp4"
+              src="/videos/3-patti.mp4"
               title="3-PATTI"
               description="Indian card game favorite with blockchain rewards"
               players="2-6"
