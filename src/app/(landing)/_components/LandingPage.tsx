@@ -38,7 +38,9 @@ const LandingPage: FC = () => {
       gsap.set(".character", {
         opacity: 0,
         scale: 2.2,
-        rotation: -20
+        rotation: -20,
+        xPercent: -50,
+        left: "50%"
       });
 
       gsap.set(".khel-text", {
@@ -80,6 +82,8 @@ const LandingPage: FC = () => {
         opacity: 1,
         scale: 1.0,
         rotation: 0,
+        xPercent: -50,
+        left: "50%",
         duration: 1.8,
         ease: "power3.out",
       }, "-=0.8")
@@ -212,8 +216,6 @@ const LandingPage: FC = () => {
             className="absolute character"
             style={{
               bottom: "-30%",
-              left: "50%",
-              transform: "translateX(-50%)",
               width: "auto",
               height: "160vh",
               maxHeight: "1000px",

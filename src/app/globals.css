@@ -444,3 +444,57 @@
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
 }
+
+/* Grid move animation for "More coming soon" card */
+@keyframes grid-move {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(30px);
+  }
+}
+
+/* Shine effect for "More coming soon" card */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(200%) rotate(45deg);
+  }
+}
+
+/* Smooth hover utilities */
+.smooth-hover {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.smooth-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Gradient shift animation for bento cards */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Pulse border animation */
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: rgba(250, 204, 21, 0.2);
+    box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+  }
+  50% {
+    border-color: rgba(250, 204, 21, 0.6);
+    box-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
+  }
+}

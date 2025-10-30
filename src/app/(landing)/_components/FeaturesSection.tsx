@@ -143,7 +143,20 @@ const BentoCard: React.FC<BentoCardProps> = ({
   };
 
   return (
-    <div ref={cardRef} className="group relative size-full smooth-hover">
+    <div ref={cardRef} className="group relative size-full smooth-hover overflow-hidden rounded-lg">
+      {/* Outer glow ring */}
+      <div className="absolute -inset-[2px] bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-60 -z-10" />
+
+      {/* Animated border glow */}
+      <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"
+           style={{
+             background: 'linear-gradient(45deg, #8b5cf6, #3b82f6, #8b5cf6)',
+             backgroundSize: '200% 200%',
+             animation: 'gradient-shift 3s ease infinite',
+             filter: 'blur(20px)',
+             transform: 'scale(1.05)'
+           }} />
+
       {isVideoLoaded ? (
         <video
           ref={videoRef}
@@ -154,7 +167,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
           autoPlay={!prefersReducedMotion}
           preload="metadata"
           onLoadedData={handleVideoLoad}
-          className="absolute left-0 top-0 size-full object-cover object-center transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110 group-hover:brightness-110"
+          className="absolute left-0 top-0 size-full object-cover object-center transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105 group-hover:brightness-125"
         />
       ) : (
         <div className="absolute left-0 top-0 size-full bg-gradient-to-br from-violet-950/50 to-black flex items-center justify-center">
@@ -167,10 +180,10 @@ const BentoCard: React.FC<BentoCardProps> = ({
       )}
 
       {/* Enhanced overlay with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/60 opacity-0 transition-all duration-500 group-hover:opacity-100" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-transparent to-black/80 opacity-50 transition-all duration-500 group-hover:opacity-20" />
 
-      {/* Subtle glow effect on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-300/10 via-transparent to-blue-300/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      {/* Stronger glow effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-400/30 via-purple-400/20 to-blue-400/30 opacity-0 transition-opacity duration-500 group-hover:opacity-100 mix-blend-screen" />
 
       {/* Bottom mask to hide small watermarks */}
       <div className="absolute left-0 right-0 bottom-0 h-12 pointer-events-none bg-gradient-to-t from-black/100 to-transparent md:h-16" />
@@ -383,11 +396,43 @@ const Features: React.FC = () => {
             />
           </BentoTilt>
 
-          <BentoTilt className="grid-card bento-tilt_2">
-            <div className="flex size-full flex-col justify-between bg-gradient-to-br from-violet-400 to-purple-600 p-5 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent" />
-              <h1 className="bento-title special-font max-w-64 text-white relative z-10">M<b>o</b>re co<b>m</b>ing s<b>o</b>on!</h1>
-              <TiLocationArrow className="m-5 scale-[5] self-end text-white/90 relative z-10 drop-shadow-lg" />
+          <BentoTilt className="grid-card bento-tilt_2 group overflow-hidden rounded-lg">
+            <div className="flex size-full flex-col justify-between bg-gradient-to-br from-violet-600 via-purple-700 to-black p-5 relative overflow-hidden">
+              {/* Outer glow ring */}
+              <div className="absolute -inset-[2px] bg-gradient-to-br from-yellow-500 via-violet-500 to-purple-500 opacity-0 blur-2xl transition-all duration-700 group-hover:opacity-70 -z-10 group-hover:scale-110" />
+
+              {/* Animated background grid */}
+              <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: `linear-gradient(rgba(139, 92, 246, 0.4) 2px, transparent 2px),
+                                   linear-gradient(90deg, rgba(139, 92, 246, 0.4) 2px, transparent 2px)`,
+                  backgroundSize: '30px 30px',
+                  animation: 'grid-move 20s linear infinite'
+                }} />
+              </div>
+
+              {/* Glowing orbs with stronger effect */}
+              <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-yellow-400/40 rounded-full blur-[80px] animate-pulse-slow group-hover:bg-yellow-400/60 transition-all duration-700" />
+              <div className="absolute bottom-1/3 right-1/4 w-32 h-32 bg-violet-400/50 rounded-full blur-[70px] animate-pulse-slow group-hover:bg-violet-400/70 transition-all duration-700" style={{ animationDelay: '1s' }} />
+
+              {/* Shine effect on hover */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                     style={{ animation: 'shine 2s ease-in-out infinite' }} />
+              </div>
+
+              {/* Pulsing border effect */}
+              <div className="absolute inset-0 rounded-lg border-2 border-yellow-400/0 group-hover:border-yellow-400/50 transition-all duration-500"
+                   style={{ animation: 'pulse-border 2s ease-in-out infinite' }} />
+
+              <div className="relative z-10">
+                <h1 className="bento-title special-font max-w-64 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)] transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_40px_rgba(250,204,21,0.8)] group-hover:text-yellow-100">
+                  M<b>o</b>re co<b>m</b>ing s<b>o</b>on!
+                </h1>
+                <p className="text-white/60 text-sm mt-2 font-mono transition-all duration-500 group-hover:text-yellow-200/80 group-hover:translate-x-1">Stay tuned for epic releases</p>
+              </div>
+
+              <TiLocationArrow className="m-5 scale-[5] self-end text-white/80 relative z-10 drop-shadow-lg transition-all duration-700 group-hover:scale-[6] group-hover:rotate-[360deg] group-hover:text-yellow-400 group-hover:drop-shadow-[0_0_20px_rgba(250,204,21,0.8)]" />
             </div>
           </BentoTilt>
 
