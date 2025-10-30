@@ -11,8 +11,8 @@ const knightWarrior = localFont({
 });
 
 export const metadata: Metadata = {
-    title: "khel.fun",
-    description: "khel.fun landing page and intro animation",
+    title: "Khel.fun - Onchain Gaming Platform",
+    description: "Khel.fun is an innovative onchain gaming platform bringing competitive gaming to the blockchain",
 };
 
 export default function RootLayout({

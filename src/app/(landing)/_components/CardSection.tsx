@@ -1,89 +1,118 @@
 'use client';
 
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import type { FC } from "react";
-import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const CardSection: FC = () => {
     // GSAP animation for staggered card entry
-    useGSAP(() => {
-        const timeline = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".card-section",
-                start: "top center",
-                end: "bottom center",
-                toggleActions: "play none none reverse"
-            }
-        });
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            const timeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".card-section",
+                    start: "top center",
+                    end: "bottom center",
+                    toggleActions: "play none none reverse"
+                }
+            });
 
-        // Fancy heading animation with split text effect
-        timeline.from(".card-heading", {
-            duration: 1.2,
-            opacity: 0,
-            y: 100,
-            rotate: 5,
-            skewX: 15,
-            ease: "back.out(1.7)",
-        });
-
-        // Enhanced card animations
-        timeline.fromTo(".card-item",
-            {
+            // Fancy heading animation with split text effect
+            timeline.from(".card-heading", {
+                duration: 1.2,
                 opacity: 0,
                 y: 100,
-                scale: 0.8,
-                rotateY: 45,
-            },
-            {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                rotateY: 0,
-                duration: 1.5,
-                ease: "elastic.out(1, 0.8)",
-                stagger: {
-                    each: 0.2,
-                    from: "center",
+                rotate: 5,
+                skewX: 15,
+                ease: "back.out(1.7)",
+            });
+
+            // Enhanced card animations
+            timeline.fromTo(".card-item",
+                {
+                    opacity: 0,
+                    y: 100,
+                    scale: 0.8,
+                    rotateY: 45,
                 },
-            },
-            "-=0.5"
-        );
-
-        // Add hover animations for cards
-        gsap.utils.toArray<HTMLElement>(".card-item").forEach((card) => {
-            card.addEventListener("mouseenter", () => {
-                gsap.to(card, {
-                    scale: 1.05,
-                    y: -10,
-                    duration: 0.3,
-                    boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-                    ease: "power2.out"
-                });
-                gsap.to(card.querySelector(".card-icon"), {
-                    scale: 1.2,
-                    rotate: 360,
-                    duration: 0.6,
-                    ease: "back.out(1.7)"
-                });
-            });
-
-            card.addEventListener("mouseleave", () => {
-                gsap.to(card, {
-                    scale: 1,
+                {
+                    opacity: 1,
                     y: 0,
-                    boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-                    duration: 0.5,
-                    ease: "power2.inOut"
-                });
-                gsap.to(card.querySelector(".card-icon"), {
                     scale: 1,
-                    rotate: 0,
-                    duration: 0.6,
-                    ease: "back.out(1.7)"
-                });
+                    rotateY: 0,
+                    duration: 1.5,
+                    ease: "elastic.out(1, 0.8)",
+                    stagger: {
+                        each: 0.2,
+                        from: "center",
+                    },
+                },
+                "-=0.5"
+            );
+
+            // Add hover animations for cards with proper cleanup
+            const cards = gsap.utils.toArray<HTMLElement>(".card-item");
+            const handlers: Array<{
+                card: HTMLElement;
+                enterHandler: () => void;
+                leaveHandler: () => void;
+            }> = [];
+
+            cards.forEach((card) => {
+                const enterHandler = () => {
+                    gsap.to(card, {
+                        scale: 1.05,
+                        y: -10,
+                        duration: 0.3,
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+                        ease: "power2.out"
+                    });
+                    gsap.to(card.querySelector(".card-icon"), {
+                        scale: 1.2,
+                        rotate: 360,
+                        duration: 0.6,
+                        ease: "back.out(1.7)"
+                    });
+                };
+
+                const leaveHandler = () => {
+                    gsap.to(card, {
+                        scale: 1,
+                        y: 0,
+                        boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+                        duration: 0.5,
+                        ease: "power2.inOut"
+                    });
+                    gsap.to(card.querySelector(".card-icon"), {
+                        scale: 1,
+                        rotate: 0,
+                        duration: 0.6,
+                        ease: "back.out(1.7)"
+                    });
+                };
+
+                card.addEventListener("mouseenter", enterHandler);
+                card.addEventListener("mouseleave", leaveHandler);
+
+                handlers.push({ card, enterHandler, leaveHandler });
             });
+
+            // Return cleanup function
+            return () => {
+                handlers.forEach(({ card, enterHandler, leaveHandler }) => {
+                    card.removeEventListener("mouseenter", enterHandler);
+                    card.removeEventListener("mouseleave", leaveHandler);
+                });
+            };
         });
+
+        return () => {
+            ctx.revert();
+            ScrollTrigger.refresh();
+        };
     }, []);
 
     const cards = [

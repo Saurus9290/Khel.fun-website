@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -17,11 +17,11 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, icon, delay = 0 }) =>
   const [count, setCount] = useState(0);
   const itemRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!itemRef.current) return;
 
     const target = parseInt(value.replace(/[^0-9]/g, ''));
-    
+
     const ctx = gsap.context(() => {
       gsap.from(itemRef.current, {
         scrollTrigger: {
@@ -46,9 +46,14 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, icon, delay = 0 }) =>
         duration: 0.8,
         delay,
       });
+
+      ScrollTrigger.refresh();
     }, itemRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      ScrollTrigger.refresh();
+    };
   }, [value, delay]);
 
   return (

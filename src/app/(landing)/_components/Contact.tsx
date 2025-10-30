@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useLayoutEffect } from "react";
 import AnimatedTitle from "./AnimatedTitle";
 import Button from "./Button";
 import gsap from "gsap";
@@ -26,7 +26,7 @@ const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imagesRef = useRef<HTMLDivElement[]>([]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
@@ -57,9 +57,14 @@ const Contact: React.FC = () => {
         duration: 3,
         ease: "sine.inOut",
       });
+      // Refresh ScrollTrigger
+      ScrollTrigger.refresh();
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      ScrollTrigger.refresh();
+    };
   }, []);
 
   return (

@@ -1,11 +1,12 @@
-'use client'; 
+'use client';
 
-import React, { useRef } from "react";
+import React, { useRef, useLayoutEffect } from "react";
 import type { FC } from "react";
-import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useMouseParallax from "@/hooks/useMouseParallax";
+
+gsap.registerPlugin(ScrollTrigger);
 import BottomBar from "./BottomBar";
 import CharacterSection from "./CharacterSection";
 import HeroText from "./HeroText";
@@ -22,124 +23,171 @@ import StatsSection from "./StatsSection";
 
 
 const LandingPage: FC = () => {
-  const mainRef = useRef<HTMLDivElement>(null!); 
-  
+  const mainRef = useRef<HTMLDivElement>(null!);
+
   useMouseParallax(mainRef);
 
-  useGSAP(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    
-    const tl = gsap.timeline();
-    
-    // Initial state setup
-    gsap.set([".sky", ".bg", ".character", ".text"], { 
-      opacity: 0,
-      scale: 1.5 
-    });
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Initial state setup - set BEFORE any animations
+      gsap.set([".sky", ".bg"], {
+        opacity: 0,
+        scale: 1.3
+      });
 
-    // Set up section transition
-    ScrollTrigger.create({
-      trigger: ".character-to-prize-trigger",
-      start: "top top",
-      end: "bottom center",
-      onEnter: () => {
-        gsap.to(".prize-section", {
-          opacity: 1,
-          duration: 0.5,
-          ease: "power2.inOut"
-        });
-      },
-      onLeave: () => {
-        gsap.to(".prize-section", {
-          opacity: 1,
-          duration: 0.5
-        });
-      },
-      onEnterBack: () => {
-        gsap.to(".prize-section", {
-          opacity: 1,
-          duration: 0.5
-        });
-      },
-      onLeaveBack: () => {
-        gsap.to(".prize-section", {
-          opacity: 0,
-          duration: 0.5
-        });
-      }
-    });
+      gsap.set(".character", {
+        opacity: 0,
+        scale: 2.2,
+        rotation: -20
+      });
 
-    // Add floating particles effect during transition
-    gsap.to(".animate-float", {
-      y: -30,
-      duration: "random(2, 4)",
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-      stagger: {
-        amount: 2,
-        from: "random"
-      }
-    });
+      gsap.set(".khel-text", {
+        opacity: 0,
+        x: -100,
+        y: -50,
+        rotation: -15
+      });
 
-    // Create a dynamic entry sequence
-    tl.to(".main", {
-      scale: 1,
-      rotate: 0,
-      duration: 1.5,
-      ease: "expo.out",
-    })
-    .to(".sky", {
-      opacity: 1,
-      scale: 1.1,
-      rotate: 0,
-      duration: 1.2,
-      ease: "power2.inOut",
-    }, "-=1.2")
-    .to(".bg", {
-      opacity: 1,
-      scale: 1.1,
-      rotate: 0,
-      duration: 1.2,
-      ease: "power2.inOut",
-    }, "-=1")
-    .to(".character", {
-      opacity: 1,
-      scale: 0.7,
-      x: "-50%",
-      bottom: "-20%",
-      rotate: 0,
-      duration: 1.5,
-      ease: "back.out(1.2)",
-    }, "-=0.8")
-    .to(".text", {
-      opacity: 1,
-      scale: 1,
-      rotate: 0,
-      duration: 1,
-      ease: "back.out(1.4)",
-    }, "-=1");
+      gsap.set(".fun-text", {
+        opacity: 0,
+        x: 100,
+        y: 50,
+        rotation: 15
+      });
 
-    // Add parallax effect on scroll
-    gsap.to([".sky", ".bg"], {
-      yPercent: 30,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".landing",
+      // Create a dynamic entry sequence using .to() instead of .from()
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+      tl.to(".main", {
+        scale: 1,
+        rotation: 0,
+        duration: 1.5,
+        ease: "expo.out",
+      })
+      .to(".sky", {
+        opacity: 1,
+        scale: 1.1,
+        rotation: 0,
+        duration: 1.2,
+      }, "-=1.2")
+      .to(".bg", {
+        opacity: 1,
+        scale: 1.1,
+        rotation: 0,
+        duration: 1.2,
+      }, "-=1")
+      .to(".character", {
+        opacity: 1,
+        scale: 1.0,
+        rotation: 0,
+        duration: 1.8,
+        ease: "power3.out",
+      }, "-=0.8")
+      .to(".khel-text", {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        duration: 1.4,
+        ease: "back.out(1.7)",
+      }, "-=1.2")
+      .to(".fun-text", {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        duration: 1.4,
+        ease: "back.out(1.7)",
+      }, "-=1.1");
+
+      // Add parallax effect on scroll
+      gsap.to([".sky", ".bg"], {
+        yPercent: 30,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".landing",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+          invalidateOnRefresh: true
+        }
+      });
+
+      // Parallax text movement on scroll
+      gsap.to(".khel-text", {
+        y: 100,
+        opacity: 0.3,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".landing",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1
+        }
+      });
+
+      gsap.to(".fun-text", {
+        y: -100,
+        opacity: 0.3,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".landing",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1
+        }
+      });
+
+      // Subtle floating animation for character - very smooth and small
+      gsap.to(".character", {
+        y: 12,
+        duration: 5,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1
+      });
+
+      // Floating particles effect
+      gsap.to(".animate-float", {
+        y: -20,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: {
+          amount: 1.5,
+          from: "random"
+        }
+      });
+
+      // Section transition with proper ScrollTrigger
+      ScrollTrigger.create({
+        trigger: ".character-to-prize-trigger",
         start: "top top",
-        end: "bottom top",
-        scrub: true
-      }
-    });
+        end: "bottom center",
+        onEnter: () => {
+          gsap.to(".prize-section", {
+            opacity: 1,
+            duration: 0.5,
+            ease: "power2.inOut"
+          });
+        },
+        onLeaveBack: () => {
+          gsap.to(".prize-section", {
+            opacity: 0,
+            duration: 0.5
+          });
+        }
+      });
 
-    // Add floating animation to character
-    gsap.to(".character", {
-      y: "20px",
-      duration: 2,
-      ease: "power1.inOut",
-      yoyo: true,
-      repeat: -1
-    });
+      // Refresh ScrollTrigger after everything is set up
+      ScrollTrigger.refresh();
+    }, mainRef);
+
+    return () => {
+      ctx.revert();
+      ScrollTrigger.refresh();
+    };
   }, []);
 
   return (
@@ -161,8 +209,16 @@ const LandingPage: FC = () => {
           />
           <HeroText />
           <img
-            // Increased initial bottom offset to ensure it starts fully off-screen
-            className="absolute character -bottom-[100%] left-1/2 -translate-x-1/2 scale-[1.5] rotate-[-20deg]"
+            className="absolute character"
+            style={{
+              bottom: "-30%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "auto",
+              height: "160vh",
+              maxHeight: "1000px",
+              objectFit: "contain"
+            }}
             src="./girl.png"
             alt="Main character"
           />
@@ -170,18 +226,24 @@ const LandingPage: FC = () => {
         <BottomBar />
       </div>
       {/* Smooth section transitions */}
-      <div className="relative bg-black z-10 min-h-screen">
-        {/* Test visibility section */}
-        
-        {/* About section commented out */}
-        {/* <About /> */}
-        
+      <div className="relative bg-black z-10">
+        {/* Character Section with 3D Card */}
+        <CharacterSection />
+
+        {/* PLAY. WIN. EARN Cards */}
+        <PrizeKingdomsSection />
+
+
+        {/* Game Features */}
         <Features />
-        
+
+        {/* Stats Section */}
         <StatsSection />
-        
+
+        {/* Story Section */}
         <Story />
-        
+
+        {/* Contact Section */}
         <Contact />
       </div>
       <Footer />

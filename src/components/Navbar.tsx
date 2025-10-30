@@ -50,24 +50,26 @@ const Navbar: FC = () => {
 
     // Calculate scroll progress
     const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = (currentScrollY / windowHeight) * 100;
+    const progress = windowHeight > 0 ? (currentScrollY / windowHeight) * 100 : 0;
     setScrollProgress(progress);
 
     if (currentScrollY === 0) {
       // Topmost position: show navbar without floating-nav
       setIsNavVisible(true);
       container.classList.remove("floating-nav");
+      setLastScrollY(0);
     } else if (currentScrollY > lastScrollY) {
       // Scrolling down: hide navbar and apply floating-nav
       setIsNavVisible(false);
       container.classList.add("floating-nav");
+      setLastScrollY(currentScrollY);
     } else if (currentScrollY < lastScrollY) {
       // Scrolling up: show navbar with floating-nav
       setIsNavVisible(true);
       container.classList.add("floating-nav");
+      setLastScrollY(currentScrollY);
     }
-    setLastScrollY(currentScrollY);
-  }, [currentScrollY, lastScrollY]);
+  }, [currentScrollY]);
 
   // GSAP animation for showing/hiding the navbar
   useEffect(() => {
@@ -112,13 +114,20 @@ const Navbar: FC = () => {
           
           {/* Logo and product button */}
           <div className="flex items-center gap-7">
-            {/* Using KHEL.FUN as the main logo text */}
-             <h3 
-              className="text-2xl leading-none text-white uppercase font-black tracking-widest"
-              style={{ fontFamily: 'var(--font-knight-warrior), sans-serif' }}
-            >
-              KHEL.FUN
-            </h3>
+            {/* Logo with image */}
+            <div className="flex items-center gap-3">
+              <img
+                src="/img/logo.png"
+                alt="Khel.fun Logo"
+                className="w-10 h-10 object-contain"
+              />
+              <h3
+                className="text-2xl leading-none text-white uppercase font-black tracking-widest"
+                style={{ fontFamily: 'var(--font-knight-warrior), sans-serif' }}
+              >
+                KHEL.FUN
+              </h3>
+            </div>
 
             <Button
               id="product-button"
@@ -152,11 +161,9 @@ const Navbar: FC = () => {
               <audio
                 ref={audioElementRef}
                 className="hidden"
-                // Assuming audio/loop.mp3 is in the public directory
                 src="/audio/loop.mp3"
                 loop
-                // Muted attribute allows autoplay in some browsers, but will be toggled on click anyway.
-                muted={!isAudioPlaying}
+                preload="auto"
               />
               {[1, 2, 3, 4].map((bar) => (
                 <div

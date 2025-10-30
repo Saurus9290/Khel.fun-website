@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useLayoutEffect } from "react";
 import AnimatedTitle from "./AnimatedTitle";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -47,7 +47,7 @@ const Story: React.FC = () => {  const frameRef = useRef<HTMLImageElement>(null)
     });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
@@ -77,9 +77,14 @@ const Story: React.FC = () => {  const frameRef = useRef<HTMLImageElement>(null)
           ease: "power2.out",
         });
       }
+      // Refresh ScrollTrigger
+      ScrollTrigger.refresh();
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      ScrollTrigger.refresh();
+    };
   }, []);
 
   return (
